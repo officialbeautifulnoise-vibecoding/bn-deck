@@ -1,0 +1,2205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beautiful Noise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ── Tokens ── */
+    :root {
+      --bg:       #080808;
+      --bg-2:     #101010;
+      --bg-3:     #181818;
+      --text:     #f0f0f0;
+      --muted:    rgba(240,240,240,0.44);
+      --faint:    rgba(240,240,240,0.09);
+      --border:   rgba(240,240,240,0.08);
+      --nav-h:    56px;
+      --ff-body:  'Helvetica Neue', Helvetica, Arial, 'Noto Sans KR', sans-serif;
+      --ff-ko-hd: 'Do Hyeon', 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+    }
+
+    /* ── Base ── */
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ff-body);
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Language ── */
+    [data-ko] { display: none; }
+    body.ko [data-en] { display: none; }
+    body.ko [data-ko] { display: revert; }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px;
+      background: rgba(8,8,8,0.96);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      cursor: pointer; text-decoration: none; flex-shrink: 0;
+      display: flex; align-items: center;
+    }
+    .nav-logo img {
+      height: 22px; width: auto; display: block;
+    }
+    .nav-center {
+      display: flex; align-items: center; gap: 28px;
+      list-style: none; position: absolute; left: 50%; transform: translateX(-50%);
+    }
+    .nav-center a {
+      font-size: 11px; font-weight: 400; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--muted);
+      text-decoration: none; cursor: pointer; transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .nav-center a:hover, .nav-center a.active { color: var(--text); }
+    .nav-right { display: flex; align-items: center; gap: 0; flex-shrink: 0; }
+    .lang-switch {
+      display: flex; border: 1px solid var(--border); border-radius: 2px; overflow: hidden;
+    }
+    .lang-switch button {
+      background: none; border: none; color: var(--muted);
+      font-family: var(--ff-body); font-size: 10px; font-weight: 500;
+      letter-spacing: 0.12em; padding: 4px 10px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .lang-switch button.active { background: var(--faint); color: var(--text); }
+
+    /* ── Pages ── */
+    .page { display: none; min-height: 100vh; padding-top: var(--nav-h); }
+    .page.active { display: block; }
+    .inner { max-width: 1280px; margin: 0 auto; padding: 0 40px; }
+
+    /* ══════════════════════════════
+       HOME
+    ══════════════════════════════ */
+    .home-hero {
+      min-height: calc(100vh - var(--nav-h));
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 80px 40px;
+      max-width: 1280px; margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .home-eyebrow {
+      font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 28px;
+    }
+    .home-headline {
+      font-size: clamp(56px, 9.5vw, 148px);
+      font-weight: 800; line-height: 0.96; letter-spacing: -0.035em;
+      max-width: 980px;
+    }
+    body.ko .home-headline { font-family: var(--ff-ko-hd); font-weight: 700; letter-spacing: -0.02em; }
+    .home-sub {
+      margin-top: 40px; font-size: 13px;
+      color: var(--muted); max-width: 520px; line-height: 1.82;
+      letter-spacing: 0.01em;
+    }
+    /* ── Home artists list (Dirty Hit style) ── */
+    .home-artists-section {
+      padding: 56px 0 60px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .home-artists-list {
+      font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--muted); line-height: 2.4; max-width: 780px; margin: 0 auto;
+    }
+    .home-artists-list a {
+      color: var(--muted); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .home-artists-list a:hover { color: var(--text); }
+    /* ── About logo ── */
+    .about-logo-wrap {
+      padding: 72px 0 60px; border-bottom: 1px solid var(--border);
+    }
+    .about-logo-wrap img {
+      max-width: 560px; width: 100%; display: block;
+    }
+
+    /* Section headers */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 44px 0 0;
+      border-bottom: 1px solid var(--border); padding-bottom: 18px;
+    }
+    .section-label {
+      font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted);
+    }
+    .section-link {
+      font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer; text-decoration: none; transition: color 0.2s;
+    }
+    .section-link:hover { color: var(--text); }
+
+    /* Spotify embeds — home */
+    .spotify-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+      padding: 24px 0 48px;
+    }
+    .spotify-card {}
+    .spotify-card iframe {
+      border-radius: 8px; width: 100%; height: 152px;
+      border: none; display: block; background: var(--bg-3);
+    }
+    .spotify-card-label { margin-top: 10px; font-size: 11px; color: var(--muted); }
+    .spotify-card-title { font-size: 14px; margin-top: 3px; }
+
+    /* News preview */
+    .news-preview { border-top: none; }
+    .news-preview-item {
+      display: grid; grid-template-columns: 100px 1fr;
+      gap: 24px; padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .news-preview-item:last-child { border-bottom: none; padding-bottom: 48px; }
+    .news-preview-item:hover { opacity: 0.6; }
+    .news-preview-date { font-size: 11px; color: var(--muted); padding-top: 2px; }
+    .news-preview-title { font-size: 14px; line-height: 1.5; }
+
+    /* ══════════════════════════════
+       ARTISTS
+    ══════════════════════════════ */
+    .page-header {
+      padding: 56px 0 40px; border-bottom: 1px solid var(--border);
+    }
+    .page-header h1 {
+      font-size: clamp(28px, 4vw, 52px); font-weight: 300; letter-spacing: -0.015em;
+    }
+    body.ko .page-header h1 { font-family: var(--ff-ko-hd); font-weight: 400; }
+    .page-header p {
+      margin-top: 14px; font-size: 13px; color: var(--muted);
+      max-width: 480px; line-height: 1.7;
+    }
+
+    /* UMG-style artist grid */
+    .artists-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0; background: var(--border);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .artist-card {
+      background: var(--bg); cursor: pointer;
+      transition: background 0.25s; overflow: hidden;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .artist-card:hover { background: var(--bg-2); }
+    .artist-card-photo {
+      width: 100%; aspect-ratio: 1/1; background: var(--bg-3);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .artist-card-photo img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.55s ease; display: block;
+    }
+    .artist-card:hover .artist-card-photo img { transform: scale(1.04); }
+    .artist-photo-placeholder {
+      font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(240,240,240,0.1);
+    }
+    .artist-card-info { padding: 18px 20px 22px; }
+    .artist-card-name {
+      font-size: 17px; font-weight: 500; letter-spacing: -0.01em;
+    }
+    body.ko .artist-card-name { font-family: 'Noto Sans KR', sans-serif; }
+    .artist-card-genre {
+      font-size: 11px; color: var(--muted); margin-top: 4px;
+    }
+
+    /* Artist profile */
+    .artist-profile { display: none; }
+    .artist-profile.active { display: block; }
+    .profile-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer; background: none; border: none;
+      padding: 36px 0 0; transition: color 0.2s; font-family: var(--ff-body);
+    }
+    .profile-back:hover { color: var(--text); }
+    .profile-hero {
+      display: grid; grid-template-columns: 380px 1fr;
+      gap: 80px; padding: 40px 0 56px;
+      border-bottom: 1px solid var(--border);
+    }
+    .profile-photo {
+      width: 100%; aspect-ratio: 1/1; background: var(--bg-3);
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .profile-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .profile-photo-placeholder {
+      font-size: 10px; letter-spacing: 0.2em; color: rgba(240,240,240,0.1); text-transform: uppercase;
+    }
+    .profile-meta { display: flex; flex-direction: column; justify-content: flex-end; gap: 18px; }
+    .profile-genre {
+      font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted);
+    }
+    .profile-name {
+      font-size: clamp(42px, 5.5vw, 72px); font-weight: 300;
+      line-height: 1; letter-spacing: -0.025em;
+    }
+    body.ko .profile-name { font-family: var(--ff-ko-hd); font-weight: 400; }
+    .profile-bio {
+      font-size: 14px; line-height: 1.82; color: rgba(240,240,240,0.72);
+      max-width: 520px;
+    }
+    .profile-section {
+      padding: 40px 0; border-bottom: 1px solid var(--border);
+    }
+    .profile-section:last-child { border-bottom: none; padding-bottom: 80px; }
+    .profile-section-title {
+      font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 24px;
+    }
+    /* Spotify in profile */
+    .profile-spotify iframe {
+      border-radius: 8px; width: 100%; height: 352px;
+      border: none; display: block; background: var(--bg-3);
+    }
+    .profile-spotify-note {
+      margin-top: 12px; font-size: 11px; color: var(--muted);
+    }
+    /* Discography text list */
+    .disco-list {}
+    .disco-row {
+      display: grid; grid-template-columns: 60px 1fr auto;
+      gap: 20px; align-items: baseline;
+      padding: 13px 0; border-bottom: 1px solid var(--border);
+    }
+    .disco-row:last-child { border-bottom: none; }
+    .disco-year { font-size: 11px; color: var(--muted); }
+    .disco-title { font-size: 15px; }
+    .disco-type {
+      font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+    }
+    /* Tags */
+    .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag-link {
+    text-decoration: none;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .tag-link:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .tag {
+      padding: 5px 14px; border: 1px solid var(--border);
+      font-size: 11px; color: var(--muted);
+    }
+    .tag.cover { border-color: rgba(240,240,240,0.26); color: var(--text); }
+    /* Performances */
+    .perf-list {}
+    .perf-row {
+      display: grid; grid-template-columns: 1fr auto;
+      padding: 13px 0; border-bottom: 1px solid var(--border);
+    }
+    .perf-row:last-child { border-bottom: none; }
+    .perf-name { font-size: 14px; }
+    .perf-loc { font-size: 11px; color: var(--muted); text-align: right; }
+    /* Artist video list in profile */
+    .artist-video-list {}
+    .artist-video-row {
+      display: grid; grid-template-columns: 240px 1fr;
+      gap: 20px; padding: 14px 0;
+      border-bottom: 1px solid var(--border); cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .artist-video-row:last-child { border-bottom: none; }
+    .artist-video-row:hover { opacity: 0.65; }
+    .artist-video-thumb {
+      width: 100%; aspect-ratio: 16/9; background: var(--bg-3);
+      overflow: hidden; flex-shrink: 0;
+    }
+    .yt-thumb-wrap {
+      position: relative; width: 100%; height: 100%;
+    }
+    .yt-thumb-wrap img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .yt-play {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(0,0,0,0.55); border: 1.5px solid rgba(255,255,255,0.35);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: #fff; pointer-events: none;
+      padding-left: 3px;
+    }
+    .artist-video-info { display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+    .artist-video-title { font-size: 15px; }
+    .artist-video-type { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; }
+
+    /* ══════════════════════════════
+       RELEASES
+    ══════════════════════════════ */
+    .releases-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      background: var(--border);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .release-card {
+      background: var(--bg); cursor: pointer;
+      transition: background 0.2s; overflow: hidden;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .release-card:hover { background: var(--bg-2); }
+    .release-cover {
+      width: 100%; aspect-ratio: 1/1; background: var(--bg-3);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .release-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .release-cover-placeholder {
+      font-size: 9px; letter-spacing: 0.2em; color: rgba(240,240,240,0.1); text-transform: uppercase;
+    }
+    .release-info { padding: 18px 20px 22px; }
+    /* Releases page — vertical embed list */
+    .releases-embed-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      padding-top: 8px;
+    }
+    .release-embed-item iframe {
+      border-radius: 8px; border: none; display: block;
+    }
+
+    /* ── Releases art grid ───────────────────────────────────────────── */
+    .releases-art-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      padding-top: 8px;
+    }
+    .rel-card { display: flex; flex-direction: column; gap: 8px; }
+    .rel-art-wrap {
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      border-radius: 6px;
+      background: var(--bg-3);
+      position: relative;
+    }
+    .rel-art-wrap.loading {
+      aspect-ratio: unset;
+      background: none;
+    }
+    .rel-art-link {
+      display: block; width: 100%; height: 100%;
+      position: relative; text-decoration: none;
+    }
+    .rel-art-img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: transform 0.3s ease;
+    }
+    .rel-art-link:hover .rel-art-img { transform: scale(1.03); }
+    .rel-art-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.35);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .rel-art-link:hover .rel-art-overlay { opacity: 1; }
+    .rel-art-overlay svg { filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6)); }
+    .rel-info { padding: 0 2px; }
+    .rel-artist {
+      font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 3px;
+    }
+    .rel-title { font-size: 13px; font-weight: 400; color: var(--text); }
+    @media (max-width: 1024px) { .releases-art-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 640px)  { .releases-art-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .release-artist {
+      font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+    }
+    .release-title { font-size: 16px; font-weight: 400; }
+    .release-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* ══════════════════════════════
+       VIDEOS
+    ══════════════════════════════ */
+    .videos-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      background: var(--border);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .video-cell {
+      background: var(--bg);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .video-embed {
+      width: 100%; aspect-ratio: 16/9; background: var(--bg-3); overflow: hidden;
+    }
+    .video-embed iframe { width: 100%; height: 100%; border: none; display: block; }
+    .video-cell:hover .yt-play { background: rgba(255,255,255,0.18); }
+    .video-info { padding: 16px 20px 20px; border-top: 1px solid var(--border); }
+    .video-artist {
+      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .video-title { font-size: 14px; }
+
+    /* ══════════════════════════════
+       EVENTS
+    ══════════════════════════════ */
+    .events-list {}
+    .event-row {
+      display: grid; grid-template-columns: 130px 1fr 200px;
+      gap: 32px; align-items: start;
+      padding: 28px 0; border-bottom: 1px solid var(--border);
+    }
+    .event-row:last-child { border-bottom: none; padding-bottom: 80px; }
+    .event-date { font-size: 12px; color: var(--muted); padding-top: 3px; }
+    .event-name { font-size: 20px; font-weight: 400; }
+    .event-sub { font-size: 12px; color: var(--muted); margin-top: 5px; }
+    .event-location { font-size: 12px; color: var(--muted); text-align: right; padding-top: 5px; }
+    .event-tag {
+      display: inline-block; margin-top: 12px;
+      font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted); border: 1px solid var(--border); padding: 3px 10px;
+    }
+    .event-tag.upcoming { border-color: rgba(240,240,240,0.24); color: var(--text); }
+
+    /* ══════════════════════════════
+       NEWS
+    ══════════════════════════════ */
+    .news-article { border-bottom: 1px solid var(--border); }
+    .news-article-header {
+      display: grid; grid-template-columns: 110px 1fr 100px;
+      gap: 24px; align-items: start;
+      padding: 24px 0; cursor: pointer; transition: opacity 0.2s;
+    }
+    .news-article:hover .news-article-header { opacity: 0.65; }
+    .news-article-date { font-size: 11px; color: var(--muted); padding-top: 2px; }
+    .news-article-headline { font-size: 15px; line-height: 1.45; }
+    .news-article-src { font-size: 10px; letter-spacing: 0.1em; color: var(--muted); text-align: right; padding-top: 3px; }
+    .news-article-body {
+      display: none;
+      padding: 0 0 28px 134px;
+      font-size: 14px; line-height: 1.78; color: rgba(240,240,240,0.68);
+    }
+    .news-article.open .news-article-body { display: block; }
+    .news-article-body p + p { margin-top: 14px; }
+    /* Language-specific news content */
+    .news-en {} .news-ko { display: none; }
+    body.ko .news-en { display: none; }
+    body.ko .news-ko { display: block; }
+
+    /* ══════════════════════════════
+       ABOUT
+    ══════════════════════════════ */
+    .about-hero {
+      padding: 80px 0 60px; border-bottom: 1px solid var(--border);
+    }
+    .about-hero h1 {
+      font-size: clamp(32px, 5vw, 68px); font-weight: 300;
+      line-height: 1.1; max-width: 760px; letter-spacing: -0.018em;
+    }
+    body.ko .about-hero h1 { font-family: var(--ff-ko-hd); font-weight: 400; }
+    .about-block {
+      display: grid; grid-template-columns: 220px 1fr;
+      gap: 56px; padding: 52px 0; border-bottom: 1px solid var(--border);
+    }
+    .about-block:last-child { border-bottom: none; padding-bottom: 80px; }
+    .about-label {
+      font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--muted); padding-top: 4px;
+    }
+    .about-text {
+      font-size: 15px; line-height: 1.87; color: rgba(240,240,240,0.78); max-width: 620px;
+    }
+    .about-text p + p { margin-top: 18px; }
+    .about-roster {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--border);
+    }
+    .about-roster-item {
+      background: var(--bg); padding: 24px;
+      cursor: pointer; transition: background 0.2s;
+      border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .about-roster-item:hover { background: var(--bg-2); }
+    .about-roster-name { font-size: 20px; font-weight: 400; }
+    .about-roster-genre { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    .page-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 28px 40px; border-top: 1px solid var(--border);
+      max-width: 1280px; margin: 0 auto;
+      font-size: 11px; color: var(--muted);
+    }
+    .page-footer a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .page-footer a:hover { color: var(--text); }
+
+    /* ══════════════════════════════
+       Responsive
+    ══════════════════════════════ */
+    @media (max-width: 1100px) {
+      .artists-grid { grid-template-columns: repeat(3, 1fr); }
+      .releases-grid { grid-template-columns: repeat(3, 1fr); }
+      .releases-embed-grid { grid-template-columns: repeat(2, 1fr); }
+      .profile-hero { grid-template-columns: 320px 1fr; gap: 56px; }
+      .nav-center { gap: 20px; }
+      .nav-center a { font-size: 10px; }
+    }
+    @media (max-width: 840px) {
+      nav { padding: 0 20px; }
+      .nav-center { position: static; transform: none; display: none; }
+      .inner { padding: 0 20px; }
+      .home-hero { padding: 60px 20px; }
+      .artists-grid { grid-template-columns: repeat(2, 1fr); }
+      .releases-grid { grid-template-columns: repeat(2, 1fr); }
+      .releases-embed-grid { grid-template-columns: 1fr; }
+      .videos-grid { grid-template-columns: repeat(2, 1fr); }
+      .spotify-grid { grid-template-columns: 1fr; }
+      .profile-hero { grid-template-columns: 1fr; gap: 32px; }
+      .profile-photo { aspect-ratio: 4/3; }
+      .about-block { grid-template-columns: 1fr; gap: 16px; }
+      .about-roster { grid-template-columns: repeat(2, 1fr); }
+      .event-row { grid-template-columns: 90px 1fr; }
+      .event-location { display: none; }
+      .news-article-header { grid-template-columns: 90px 1fr; }
+      .news-article-src { display: none; }
+      .news-article-body { padding-left: 0; }
+      .artist-video-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .artists-grid { grid-template-columns: repeat(2, 1fr); }
+      .releases-grid { grid-template-columns: repeat(2, 1fr); }
+      .videos-grid { grid-template-columns: 1fr; }
+      .about-roster { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ── Navigation ── -->
+<nav>
+  <a class="nav-logo" onclick="showPage('home')">
+    <img src="assets/logo/bn-logo.png" alt="Beautiful Noise">
+  </a>
+
+  <ul class="nav-center">
+    <li><a onclick="showPage('home')" id="nav-home" class="active">
+      <span data-en>Home</span><span data-ko>홈</span>
+    </a></li>
+    <li><a onclick="showPage('news')" id="nav-news">
+      <span data-en>News</span><span data-ko>뉴스</span>
+    </a></li>
+    <li><a onclick="showPage('artists')" id="nav-artists">
+      <span data-en>Artists</span><span data-ko>아티스트</span>
+    </a></li>
+    <li><a onclick="showPage('releases')" id="nav-releases">
+      <span data-en>Releases</span><span data-ko>발매</span>
+    </a></li>
+    <li><a onclick="showPage('videos')" id="nav-videos">
+      <span data-en>Videos</span><span data-ko>영상</span>
+    </a></li>
+    <li style="display:none;"><a onclick="showPage('events')" id="nav-events">
+      <span data-en>Events</span><span data-ko>공연</span>
+    </a></li>
+    <li><a onclick="showPage('about')" id="nav-about">
+      <span data-en>About</span><span data-ko>소개</span>
+    </a></li>
+  </ul>
+
+  <div class="nav-right">
+    <div class="lang-switch">
+      <button onclick="setLang('en')" class="active" id="btn-en">EN</button>
+      <button onclick="setLang('ko')" id="btn-ko">KO</button>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════
+     HOME
+══════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <div class="home-hero">
+    <h1 class="home-headline">
+      <span data-en>We Discover<br><span style="white-space:nowrap">the Eccentric</span></span>
+      <span data-ko>독창적인 것을<br><span style="white-space:nowrap">발굴합니다</span></span>
+    </h1>
+    <p class="home-sub">
+      <span data-en>Beautiful Noise is an independent record label and management company based in Seoul. Our goal is to shape the next phase of music culture by merging music, art, content, and storytelling into one vision. We discover eccentric artists, develop their work, and deliver them to the community.</span>
+      <span data-ko>Beautiful Noise는 서울 기반의 독립 레이블이자 매니지먼트 컴퍼니입니다. 음악, 아트, 콘텐츠, 스토리텔링을 하나의 비전으로 융합하며 음악 문화의 다음 국면을 만들어가는 것이 우리의 목표입니다. 독창적인 아티스트를 발굴하고, 그들의 작업을 완성하며, 커뮤니티에 전합니다.</span>
+    </p>
+  </div>
+
+  <div class="inner">
+    <div class="home-artists-section">
+      <div class="home-artists-list">
+        <a onclick="openArtist('zior-park'); showPage('artists');" style="cursor:pointer;">Zior Park</a>,&nbsp;
+        <a onclick="openArtist('sion'); showPage('artists');" style="cursor:pointer;">Sion</a>,&nbsp;
+        <a onclick="openArtist('siso'); showPage('artists');" style="cursor:pointer;">siso</a>,&nbsp;
+        <a onclick="openArtist('alice-u'); showPage('artists');" style="cursor:pointer;">Alice U</a>,&nbsp;
+        <a onclick="openArtist('ahfone'); showPage('artists');" style="cursor:pointer;">Ahfoné</a>,&nbsp;
+        <a onclick="openArtist('gyun'); showPage('artists');" style="cursor:pointer;">gyun</a>,&nbsp;
+        <a onclick="openArtist('madclown'); showPage('artists');" style="cursor:pointer;">Mad Clown</a>,&nbsp;
+        <a onclick="openArtist('mommyson'); showPage('artists');" style="cursor:pointer;">Mommy Son</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="inner">
+    <div class="section-header" style="margin-top: 0;">
+      <span class="section-label">
+        <span data-en>New Releases</span>
+        <span data-ko>최신 발매</span>
+      </span>
+      <a class="section-link" onclick="showPage('releases')">
+        <span data-en>See All →</span>
+        <span data-ko>전체 보기 →</span>
+      </a>
+    </div>
+
+    <div class="spotify-grid" id="home-releases-container"></div>
+
+    <div class="section-header">
+      <span class="section-label">
+        <span data-en>Recent News</span>
+        <span data-ko>최신 뉴스</span>
+      </span>
+      <a class="section-link" onclick="showPage('news')">
+        <span data-en>See All →</span>
+        <span data-ko>전체 보기 →</span>
+      </a>
+    </div>
+    <div class="news-preview" id="home-news-container"></div>
+  </div>
+
+  <div class="inner">
+    <footer class="page-footer" style="padding-left:0; padding-right:0;">
+      <span>Beautiful Noise © 2026</span>
+      <a href="mailto:officialbeautifulnoise@gmail.com">officialbeautifulnoise@gmail.com</a>
+    </footer>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     ARTISTS
+══════════════════════════════ -->
+<div class="page" id="page-artists">
+  <div class="inner">
+
+    <!-- Grid view -->
+    <div id="artists-grid-view">
+      <div class="page-header">
+        <h1><span data-en>Artists</span><span data-ko>아티스트</span></h1>
+      </div>
+      <div class="artists-grid">
+
+        <div class="artist-card" onclick="openArtist('zior-park')">
+          <div class="artist-card-photo">
+            <img src="assets/artists/Zior.jpg" alt="Zior Park">
+          </div>
+          <div class="artist-card-info">
+            <div class="artist-card-name">Zior Park <span data-ko style="font-size:14px; font-weight:400; color:var(--muted)"> 지올팍</span></div>
+            <div class="artist-card-genre">Alternative · Art Rock</div>
+          </div>
+        </div>
+
+        <div class="artist-card" onclick="openArtist('sion')">
+          <div class="artist-card-photo">
+            <img src="assets/artists/Sion.jpg" alt="Sion">
+          </div>
+          <div class="artist-card-info">
+            <div class="artist-card-name">Sion <span data-ko style="font-size:14px; font-weight:400; color:var(--muted)"> 시온</span></div>
+            <div class="artist-card-genre">Hyperpop · Digicore</div>
+          </div>
+        </div>
+
+        <div class="artist-card" onclick="openArtist('siso')">
+          <div class="artist-card-photo">
+            <img src="assets/artists/siso.png" alt="siso">
+          </div>
+          <div class="artist-card-info">
+            <div class="artist-card-name">siso <span data-ko style="font-size:14px; font-weight:400; color:var(--muted)"> 시소</span></div>
+            <div class="artist-card-genre">Indie Pop · R&amp;B</div>
+          </div>
+        </div>
+
+        <div class="artist-card" onclick="openArtist('alice-u')">
+          <div class="artist-card-photo">
+            <img src="assets/artists/alice.jpg" alt="Alice U">
+          </div>
+          <div class="artist-card-info">
+            <div class="artist-card-name">Alice U <span data-ko style="font-size:14px; font-weight:400; color:var(--muted)"> 앨리스유</span></div>
+            <div class="artist-card-genre">Hip Hop · R&amp;B</div>
+          </div>
+        </div>
+
+        <div class="artist-card" onclick="openArtist('ahfone')">
+          <div class="artist-card-photo">
+            <img src="assets/artists/ahfone.png" alt="Ahfoné">
+          </div>
+          <div class="artist-card-info">
+            <div class="artist-card-name">Ahfoné <span data-ko style="font-size:14px; font-weight:400; color:var(--muted)"> 아포네</span></div>
+            <div class="artist-card-genre">Hip Hop · Dark Pop</div>
+          </div>
+        </div>
+
+        <div class="artist-card" onclick="openArtist('gyun')">
+          <div class="artist-card-photo">
+            <img src="assets/artists/gyun.jpeg" alt="gyun">
+          </div>
+          <div class="artist-card-info">
+            <div class="artist-card-name">gyun</div>
+            <div class="artist-card-genre">Alt-Pop · R&amp;B</div>
+          </div>
+        </div>
+
+        <div class="artist-card" onclick="openArtist('madclown')">
+          <div class="artist-card-photo">
+            <img src="assets/artists/Mad Clown.jpg" alt="Mad Clown">
+          </div>
+          <div class="artist-card-info">
+            <div class="artist-card-name">Mad Clown <span data-ko style="font-size:14px; font-weight:400; color:var(--muted);"> 매드클라운</span></div>
+            <div class="artist-card-genre">Hip Hop</div>
+          </div>
+        </div>
+
+        <div class="artist-card" onclick="openArtist('mommyson')">
+          <div class="artist-card-photo">
+            <img src="assets/artists/Mommy Son.jpg" alt="Mommy Son">
+          </div>
+          <div class="artist-card-info">
+            <div class="artist-card-name">Mommy Son <span data-ko style="font-size:14px; font-weight:400; color:var(--muted);"> 마미손</span></div>
+            <div class="artist-card-genre">Hip Hop</div>
+          </div>
+        </div>
+
+      </div><!-- /artists-grid -->
+    </div><!-- /artists-grid-view -->
+
+
+    <!-- ── Artist Profile View ── -->
+    <div id="artist-profile-view" style="display:none;">
+
+      <!-- ═══ ZIOR PARK ═══ -->
+      <div class="artist-profile" id="profile-zior-park">
+        <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
+        <div class="profile-hero">
+          <div class="profile-photo">
+            <img src="assets/artists/Zior.jpg" alt="Zior Park">
+          </div>
+          <div class="profile-meta">
+            <div class="profile-genre">Alternative · Art Rock</div>
+            <div class="profile-name">Zior Park</div>
+            <p class="profile-bio">
+              <span data-en>Seoul-based singer-songwriter, producer, and creative director. Since his 2018 debut, Zior Park has built a cult following across Asia through cinematic visuals and genre-defying sound. His single CHRISTIAN surpassed 50 million streams, and his 2025 debut full-length A BLOODSUCKER further cemented his place as one of Korea's most distinctive indie artists.</span>
+              <span data-ko>서울 기반의 싱어송라이터·프로듀서·크리에이티브 디렉터. 2018년 데뷔 이후 독창적인 비주얼과 장르를 넘나드는 사운드로 아시아 전역에 컬트 팬덤을 구축했다. 싱글 CHRISTIAN은 5천만 스트리밍을 돌파했으며, 2025년 데뷔 정규앨범 A BLOODSUCKER로 국내 가장 독보적인 인디 아티스트로서의 입지를 굳혔다.</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
+          <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px;">
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/track/77wIhom5rTZkfymvSEB1b4?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/4MqSOAUx06i8FBWbPCMKSQ?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/6LmkkkXUI3esLEAEdJYUA3?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/4d7wbTuRfhy1YJwCueEoAX?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/0VHARY3e2b5F5OSCe9l8vx?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/5LVjO5K6RCXoeGxqG5p5lj?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/7yevXWpk0GN0jy79E5rs36?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/50ZmeOQSnD8c1J0P2BxT2n?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/5dzlqalQHxbkzkyaMg19En?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/7kKvUmDcG2GebFE3gB7IM2?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title"><span data-en>Performances</span><span data-ko>공연</span></div>
+          <div class="perf-list">
+            <div class="perf-row"><div class="perf-name">HITC 2023 by 88 Rising</div><div class="perf-loc">LA, USA</div></div>
+            <div class="perf-row"><div class="perf-name">Island Festival 2023</div><div class="perf-loc">Kaohsiung, Taiwan</div></div>
+            <div class="perf-row"><div class="perf-name">Zior Park &amp; Orange Heads</div><div class="perf-loc">Seoul, Korea</div></div>
+            <div class="perf-row"><div class="perf-name">Yokifest</div><div class="perf-loc">Budapest, Hungary</div></div>
+            <div class="perf-row"><div class="perf-name">Korea Spotlight in Mexico 2024</div><div class="perf-loc">CDMX, Mexico</div></div>
+            <div class="perf-row"><div class="perf-name">Rest In Peace Tour 2024</div><div class="perf-loc">Seoul, Korea</div></div>
+            <div class="perf-row"><div class="perf-name">Rest In Peace Tour 2024</div><div class="perf-loc">CDMX, Mexico</div></div>
+            <div class="perf-row"><div class="perf-name">Rest In Peace Tour 2025</div><div class="perf-loc">Osaka, Japan</div></div>
+            <div class="perf-row"><div class="perf-name">Bloody Day Tour 2025</div><div class="perf-loc">Seoul, Korea</div></div>
+            <div class="perf-row"><div class="perf-name">Bloody Day Tour 2025</div><div class="perf-loc">CDMX, Mexico</div></div>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title"><span data-en>Press</span><span data-ko>언론</span></div>
+          <div class="tag-cloud">
+            <a class="tag tag-link" href="https://vimeo.com/880790419" target="_blank">Spotify RADAR Korea ↗</a>
+            <a class="tag tag-link" href="https://www.youtube.com/watch?v=oYnWzJwqk80" target="_blank">GQ Korea ↗</a>
+            <a class="tag tag-link" href="https://www.youtube.com/watch?v=zS6tNxg3c1A" target="_blank">Psick University ↗</a>
+            <a class="tag tag-link" href="https://www.youtube.com/watch?v=ioZinvE03HE" target="_blank">EO ↗</a>
+            <a class="tag tag-link" href="https://www.cosmopolitan.co.kr/article/79826" target="_blank">Cosmopolitan ↗</a>
+            <a class="tag tag-link" href="https://www.cosmopolitan.co.kr/article/81917" target="_blank">DM ME ↗</a>
+            <a class="tag tag-link" href="https://www.instagram.com/p/CzN9-YQOPbm/" target="_blank">Pop Up Store w/ EQL Seongsu ↗</a>
+            <a class="tag tag-link" href="https://www.grammy.com/news/korean-alternative-artists-to-know-jiwoo-zior-park-huh-videos" target="_blank">Grammy.com ↗</a>
+            <a class="tag tag-link" href="https://heraldodemexico.com.mx/espectaculos/2024/9/23/zior-park-llega-mexico-con-rest-in-peace-por-primera-vez-precio-venta-de-boletos-640024.html" target="_blank">El Heraldo de México ↗</a>
+            <a class="tag tag-link" href="https://robotto.mx/2024/09/zior-park-llega-por-primera-vez-a-mexico-en-bajo-circuito/" target="_blank">Robotto.mx ↗</a>
+            <a class="tag tag-link" href="https://www.allkpop.com/article/2025/03/zior-parks-texas-five-city-tour-hitting-up-texas-after-mexico" target="_blank">allkpop ↗</a>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title">Video</div>
+          <div class="artist-video-list">
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=Dqlr8EDunCM','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/Dqlr8EDunCM/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="Dqlr8EDunCM">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=7-xwMY1WfK4','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/7-xwMY1WfK4/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="7-xwMY1WfK4">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=lHMULh6KNPM','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/lHMULh6KNPM/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="lHMULh6KNPM">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=6CD5MVJAUR4','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/6CD5MVJAUR4/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="6CD5MVJAUR4">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=0PO88Ep78h0','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/0PO88Ep78h0/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="0PO88Ep78h0">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=4K8oGplWiUI','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/4K8oGplWiUI/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="4K8oGplWiUI">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=8v4gryjmi9c','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/8v4gryjmi9c/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="8v4gryjmi9c">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /profile-zior-park -->
+
+
+      <!-- ═══ SION ═══ -->
+      <div class="artist-profile" id="profile-sion">
+        <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
+        <div class="profile-hero">
+          <div class="profile-photo">
+            <img src="assets/artists/Sion.jpg" alt="Sion">
+          </div>
+          <div class="profile-meta">
+            <div class="profile-genre">Hyperpop · Digicore</div>
+            <div class="profile-name">Sion</div>
+            <p class="profile-bio">
+              <span data-en>Self-taught singer/songwriter/producer born in Germany, based in South Korea. Semifinalist on The Voice of Germany Season 10. Braindead charted on Korea Top 100 and was recognized by NCT Mark and BTS V. His EP eigensinn (2025) led to a full European tour across six cities.</span>
+              <span data-ko>독일 태생의 독학 싱어송라이터·프로듀서, 현재 한국 거주. The Voice of Germany 시즌 10 준결승 진출. Braindead는 한국 Top 100에 차트인했으며 NCT 마크, BTS V의 언급을 받았다. 2025년 EP eigensinn 발매 후 유럽 6개 도시 투어를 완수했다.</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
+          <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px;">
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/6POxibMWodpZmXdkkV97Lf?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/15XP68PNMORaE2xmbxyf3P?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/5oHPjdcJM6hiYNbFVNAJUg?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/1WeXuEY2C5ovaPxuTNvhlF?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/6QvwA1sCAvYGRxLzTctp8v?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/1HekNS17rFw2vtSmnl5Ty3?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/79vgtnhjVpKDS8GpWsu1Sp?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/5Y2eg7LXKaXjcDcfaYVgwj?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/600af5WWeNaasoZFOzG8DN?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title"><span data-en>Performances</span><span data-ko>공연</span></div>
+          <div class="perf-list">
+            <div class="perf-row"><div class="perf-name">HITC 2023</div><div class="perf-loc">Los Angeles</div></div>
+            <div class="perf-row"><div class="perf-name">Hamburg Reeperbahn Festival 2024</div><div class="perf-loc">Germany</div></div>
+            <div class="perf-row"><div class="perf-name">Out of the Box Tour</div><div class="perf-loc">Seoul · Taipei · Berlin · Osaka</div></div>
+            <div class="perf-row"><div class="perf-name">European Tour 2025</div><div class="perf-loc">London · Paris · Madrid · Cologne · Berlin · Frankfurt</div></div>
+            <div class="perf-row"><div class="perf-name">Ones to Watch Showcase</div><div class="perf-loc">Sydney</div></div>
+            <div class="perf-row"><div class="perf-name">Korea Spotlight Showcase</div><div class="perf-loc">Melbourne</div></div>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title"><span data-en>Press</span><span data-ko>언론</span></div>
+          <div class="tag-cloud">
+            <span class="tag">Rolling Stone Korea</span>
+            <span class="tag">IZE Magazine</span>
+            <span class="tag">Korean Music Awards</span>
+            <a class="tag tag-link" href="https://title-mag.com/digicore-begins-where-identity-ends-sion-resets-hyperpop/" target="_blank">TITLE Magazine ↗</a>
+            <a class="tag tag-link" href="https://spincoaster.com/interview-sion-eigensinn" target="_blank">Spincoaster ↗</a>
+            <a class="tag tag-link" href="https://weeavemagazine.com/2026/01/11/interview-sion-instinct-detail-and-a-new-center-of-gravity-how-eigensinn-found-its-shape/" target="_blank">WEEAVE Magazine ↗</a>
+            <a class="tag tag-link" href="https://metalmagazine.eu/en/post/sion-2" target="_blank">Metal Magazine ↗</a>
+            <a class="tag tag-link" href="https://www.15questions.net/interview/fifteen-questions-interview-sion/" target="_blank">15 Questions ↗</a>
+            <a class="tag tag-link" href="https://www.kpopconcertseurope.com/post/exclusive-interview-with-sion" target="_blank">KPop Concerts Europe ↗</a>
+            <a class="tag tag-link" href="https://londonkoreanlinks.net/2025/07/27/sion-eigensinn-tour-in-london/" target="_blank">London Korean Links ↗</a>
+            <a class="tag tag-link" href="https://fastforward-magazine.de/sion-im-interview-sobald-ich-meine-musik-fuer-publikum-veraendere-ist-es-nicht-mehr-meine-musik/" target="_blank">Fast Forward DE ↗</a>
+            <a class="tag tag-link" href="https://thecircle.de/en/blogs/popkultur/ein-gesprach-mit-sion-es-ist-k-hyper-pop" target="_blank">The Circle DE ↗</a>
+            <a class="tag tag-link" href="https://starzone.ch/de/page/sion-eine-rebellion-gegen-die-k-pop-strukturen" target="_blank">Starzone CH ↗</a>
+            <a class="tag tag-link" href="https://diffus.de/p/sion-von-coversongs-aus-bielefeld-zu-k-hyperpop-aus-seoul/" target="_blank">Diffus DE ↗</a>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title">Video</div>
+          <div class="artist-video-list">
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=dOjCOCZ2ydM','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/dOjCOCZ2ydM/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="dOjCOCZ2ydM">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=nZSyVtrnPwE','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/nZSyVtrnPwE/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="nZSyVtrnPwE">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=0it1ZwbiJeE','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/0it1ZwbiJeE/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="0it1ZwbiJeE">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=gr4zNrHQnZI','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/gr4zNrHQnZI/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="gr4zNrHQnZI">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=3jA8xz8Ba1Q','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/3jA8xz8Ba1Q/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="3jA8xz8Ba1Q">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=ACWHGhi-Ckg','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/ACWHGhi-Ckg/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="ACWHGhi-Ckg">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=I_ohKwqTv6I','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/I_ohKwqTv6I/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="I_ohKwqTv6I">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /profile-sion -->
+
+
+      <!-- ═══ SISO ═══ -->
+      <div class="artist-profile" id="profile-siso">
+        <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
+        <div class="profile-hero">
+          <div class="profile-photo">
+            <img src="assets/artists/siso.png" alt="siso">
+          </div>
+          <div class="profile-meta">
+            <div class="profile-genre">Indie Pop · R&amp;B</div>
+            <div class="profile-name">siso</div>
+            <p class="profile-bio">
+              <span data-en>South Korean singer-songwriter known for delivering special emotions through a unique vocal tone and intimate lyrics. Her 2022 single "사랑이 아닌 단어로 사랑을 말해요" went viral on TikTok. Influenced by Kali Uchis, Jungle, Sault, L'Impératrice, and Sheena Ringo.</span>
+              <span data-ko>독특한 보컬 톤과 가사로 특별한 감정을 전하는 한국인 싱어송라이터. 2022년 "사랑이 아닌 단어로 사랑을 말해요"가 TikTok에서 바이럴됐다. 인플루언스: Kali Uchis, Jungle, Sault, L'Impératrice, Sheena Ringo.</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
+          <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px;">
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/track/43pxILjtsYfVCaBxjUmcVL?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/0KGYduvgnJpyuBwjEmIyZr?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/1LULxDQtvUx6miaSB3nTaY?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/14CUSx8Br1OuPQmsXNnyd6?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/2BOen4w2p22PFO5XTXoAMY?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/1OilSmtDUQouwzr8Dp6ATu?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/6FLq4oUbZayLAVuMobzgo1?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title">Video</div>
+          <div class="artist-video-list">
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=DwhQzQigrw0','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/DwhQzQigrw0/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="DwhQzQigrw0">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=Omi-SAnnKAA','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/Omi-SAnnKAA/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="Omi-SAnnKAA">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=a-5nhD8AIQw','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/a-5nhD8AIQw/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="a-5nhD8AIQw">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=QSmjx75Zbfw','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/QSmjx75Zbfw/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="QSmjx75Zbfw">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=vCM0P2jNLNA','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/vCM0P2jNLNA/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="vCM0P2jNLNA">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title">TV &amp; Media</div>
+          <div class="perf-list">
+            <div class="perf-row"><div class="perf-name">Bugs Special Clip</div><div class="perf-loc">물속에 (Make me swim)</div></div>
+            <div class="perf-row"><div class="perf-name">Bugs Special Clip</div><div class="perf-loc">내 머릿속 유명한 사람</div></div>
+            <div class="perf-row"><div class="perf-name">Clip Crew Live</div><div class="perf-loc">Live Clip</div></div>
+          </div>
+        </div>
+      </div><!-- /profile-siso -->
+
+
+      <!-- ═══ GYUN ═══ -->
+      <div class="artist-profile" id="profile-gyun">
+        <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
+        <div class="profile-hero">
+          <div class="profile-photo">
+            <img src="assets/artists/gyun.jpeg" alt="gyun">
+          </div>
+          <div class="profile-meta">
+            <div class="profile-genre">Hip Hop · R&amp;B</div>
+            <div class="profile-name">gyun</div>
+            <p class="profile-bio">
+              <span data-en>Singer/rapper, songwriter and producer who grew up in Silicon Valley, now based in Seoul. Discovered on SoundCloud with 20+ self-released singles. Debut EP PSEUDO 1.0 (2024) introduced his signature alt-pop sound blending hyperpop, R&amp;B, and alt rock.</span>
+              <span data-ko>실리콘밸리 출신 싱어래퍼·송라이터·프로듀서. SoundCloud에서 자작 싱글 20곡 이상으로 발굴됐다. 2024년 데뷔 EP PSEUDO 1.0으로 하이퍼팝·R&amp;B·얼트록을 결합한 독자적인 얼트팝 사운드를 선보였다.</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
+          <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px; margin-bottom:20px;">
+            <iframe style="border-radius:8px;border:none;display:block;"
+              src="https://open.spotify.com/embed/album/2WgflQMGnxYqAbCq3CS4PM?utm_source=generator&theme=0"
+              width="100%" height="152"
+              allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
+              loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;"
+              src="https://open.spotify.com/embed/album/4M1Bmg5I4vDoRlIKo3DDAc?utm_source=generator&theme=0"
+              width="100%" height="152"
+              allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
+              loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;"
+              src="https://open.spotify.com/embed/album/2wm10RxvtwcvIKFaJLin62?utm_source=generator&theme=0"
+              width="100%" height="152"
+              allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
+              loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;"
+              src="https://open.spotify.com/embed/album/1uoKuIK0h6NA2etnMky8iX?utm_source=generator&theme=0"
+              width="100%" height="152"
+              allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
+              loading="lazy"></iframe>
+          </div>
+          <div class="disco-list">
+            <div class="disco-row"><div class="disco-year">2025</div><div class="disco-title">dogdays</div><div class="disco-type">EP</div></div>
+            <div class="disco-row"><div class="disco-year">2025</div><div class="disco-title">PSEUDO 2.0</div><div class="disco-type">EP</div></div>
+            <div class="disco-row"><div class="disco-year">2024</div><div class="disco-title">STRESSED OUT</div><div class="disco-type">Single</div></div>
+            <div class="disco-row"><div class="disco-year">2024</div><div class="disco-title">PSEUDO 1.0</div><div class="disco-type">EP</div></div>
+            <div class="disco-row"><div class="disco-year">2023</div><div class="disco-title">FEELS LIKE DEATH</div><div class="disco-type">Single</div></div>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title"><span data-en>Performances</span><span data-ko>공연</span></div>
+          <div class="perf-list">
+            <div class="perf-row"><div class="perf-name">HITC 2023</div><div class="perf-loc">Los Angeles — 88 Rising</div></div>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title">Video</div>
+          <div class="artist-video-list">
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=dnnVhTJtCFQ','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/dnnVhTJtCFQ/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="dnnVhTJtCFQ">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=EMx7sH54iSM','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/EMx7sH54iSM/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="EMx7sH54iSM">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=6rZjtDKHQro','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/6rZjtDKHQro/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="6rZjtDKHQro">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=1rMExceBSmM','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/1rMExceBSmM/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="1rMExceBSmM">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=8k-Lhx6djjg','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/8k-Lhx6djjg/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="8k-Lhx6djjg">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=n5h-qC9BxrQ','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/n5h-qC9BxrQ/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="n5h-qC9BxrQ">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=KsAwkCQV-lU','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/KsAwkCQV-lU/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="KsAwkCQV-lU">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=MqEHmfeFO6I','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/MqEHmfeFO6I/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="MqEHmfeFO6I">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /profile-gyun -->
+
+
+      <!-- ═══ ALICE U ═══ -->
+      <div class="artist-profile" id="profile-alice-u">
+        <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
+        <div class="profile-hero">
+          <div class="profile-photo">
+            <img src="assets/artists/alice.jpg" alt="Alice U">
+          </div>
+          <div class="profile-meta">
+            <div class="profile-genre">Alt-Pop · R&amp;B</div>
+            <div class="profile-name">Alice U</div>
+            <p class="profile-bio">
+              <span data-en>Creator and singer-songwriter with a decadent mood and mysterious charm. Live clips and digital content have accumulated 2.8M+ views across TikTok and Instagram. Known for Show Me The Money 12 (Mnet) and ENA's Undercover. Currently preparing her debut mixtape.</span>
+              <span data-ko>퇴폐적인 무드와 미스터리한 매력의 크리에이터·싱어송라이터. TikTok·Instagram 라이브 클립 및 디지털 콘텐츠 280만 뷰 이상. 쇼미더머니12(Mnet), ENA 언더커버 출연. 현재 데뷔 믹스테입 준비 중.</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
+          <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px; margin-bottom:20px;">
+            <iframe style="border-radius:8px;border:none;display:block;"
+              src="https://open.spotify.com/embed/album/4OZQOLmpjv7wXSISHcgpL3?utm_source=generator&theme=0"
+              width="100%" height="152"
+              allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
+              loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;"
+              src="https://open.spotify.com/embed/track/3bGPe9oJLRvpufPOUXRuUD?utm_source=generator&theme=0"
+              width="100%" height="152"
+              allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
+              loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;"
+              src="https://open.spotify.com/embed/track/0Z3rOPU261tjYl7h5aFPf2?utm_source=generator&theme=0"
+              width="100%" height="152"
+              allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
+              loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;"
+              src="https://open.spotify.com/embed/track/7FlvExiBqk2YjaDqGJpzuv?utm_source=generator&theme=0"
+              width="100%" height="152"
+              allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
+              loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;"
+              src="https://open.spotify.com/embed/album/5omjfr4eSU1xPjcYtc714V?utm_source=generator&theme=0"
+              width="100%" height="152"
+              allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
+              loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title">TV &amp; Media</div>
+          <div class="perf-list">
+            <div class="perf-row"><div class="perf-name">Show Me The Money 12</div><div class="perf-loc">Mnet, 2025</div></div>
+            <div class="perf-row"><div class="perf-name">ENA Undercover</div><div class="perf-loc">ENA, 2024</div></div>
+          </div>
+        </div>
+      </div><!-- /profile-alice-u -->
+
+
+      <!-- ═══ AHFONÉ ═══ -->
+      <div class="artist-profile" id="profile-ahfone">
+        <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
+        <div class="profile-hero">
+          <div class="profile-photo">
+            <img src="assets/artists/ahfone.png" alt="Ahfoné">
+          </div>
+          <div class="profile-meta">
+            <div class="profile-genre">Hip Hop · Dark Pop</div>
+            <div class="profile-name">Ahfoné</div>
+            <p class="profile-bio">
+              <span data-en>Ahfoné builds a unique sound world by fusing singing and hip-hop within an electronic music framework. With androgynous charm and unpredictable, impulsive energy, Ahfoné reinterprets 2010s K-pop aesthetics through a modern hyperpop lens.</span>
+              <span data-ko>전자 음악 프레임 기반으로 싱잉과 힙합을 결합하여 독보적인 사운드 영역을 구축하는 아티스트. 중성적인 매력과 충동적 에너지로 2010년대 K-pop을 현대적인 하이퍼팝으로 재해석한다.</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title"><span data-en>Releases</span><span data-ko>발매</span></div>
+          <div class="profile-spotify" style="margin-bottom:20px;">
+            <iframe
+              src="https://open.spotify.com/embed/album/17VMhrJFeiCHuahzjVzpew?utm_source=generator&theme=0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy" title="Ahfoné — wantu2stay">
+            </iframe>
+            <p class="profile-spotify-note">
+              <span data-en>Listen on <a href="https://open.spotify.com/artist/SPOTIFY_ARTIST_ID_AHFONE" target="_blank" style="color:var(--muted);">Spotify ↗</a></span>
+              <span data-ko>Spotify에서 듣기 <a href="https://open.spotify.com/artist/SPOTIFY_ARTIST_ID_AHFONE" target="_blank" style="color:var(--muted);">↗</a></span>
+            </p>
+          </div>
+          <div class="disco-list">
+
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title">Video</div>
+          <div class="artist-video-list">
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=bRYphRnent8','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/bRYphRnent8/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="bRYphRnent8">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /profile-ahfone -->
+
+      <!-- ═══ MAD CLOWN ═══ -->
+      <div class="artist-profile" id="profile-madclown">
+        <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
+        <div class="profile-hero">
+          <div class="profile-photo">
+            <img src="assets/artists/Mad Clown.jpg" alt="Mad Clown">
+          </div>
+          <div class="profile-meta">
+            <div class="profile-genre">Hip Hop</div>
+            <div class="profile-name">Mad Clown</div>
+            <p class="profile-bio">
+              <span data-en>Seoul-based rapper. Releasing monthly singles as part of an ongoing project — one track at a time, every month.</span>
+              <span data-ko>서울 기반 래퍼. 매달 한 곡씩 발매하는 월간 싱글 프로젝트를 진행 중이다.</span>
+            </p>
+          </div>
+        </div>
+        <div class="profile-section">
+          <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
+          <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px; margin-bottom:20px;">
+            <iframe style="border-radius:8px;border:none;display:block;"
+              src="https://open.spotify.com/embed/album/3r5Tzrgw9TKGmAEwFvUGNi?utm_source=generator&theme=0"
+              width="100%" height="152"
+              allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
+              loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title">Video</div>
+          <div class="artist-video-list">
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=8CiXNQvc3OA','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/8CiXNQvc3OA/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="8CiXNQvc3OA">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=ekKnNTpm3Cs','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/ekKnNTpm3Cs/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="ekKnNTpm3Cs">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=4uwfr81eGSk','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/4uwfr81eGSk/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="4uwfr81eGSk">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /profile-madclown -->
+
+      <!-- ═══ MOMMY SON ═══ -->
+      <div class="artist-profile" id="profile-mommyson">
+        <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
+        <div class="profile-hero">
+          <div class="profile-photo">
+            <img src="assets/artists/Mommy Son.jpg" alt="Mommy Son">
+          </div>
+          <div class="profile-meta">
+            <div class="profile-genre">Hip Hop</div>
+            <div class="profile-name">Mommy Son</div>
+            <p class="profile-bio">
+              <span data-en>Seoul-based artist. Releasing monthly singles as part of an ongoing project — one track at a time, every month.</span>
+              <span data-ko>서울 기반 아티스트. 매달 한 곡씩 발매하는 월간 싱글 프로젝트를 진행 중이다.</span>
+            </p>
+          </div>
+        </div>
+        <div class="profile-section">
+          <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
+          <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px; margin-bottom:20px;">
+            <iframe style="border-radius:8px;border:none;display:block;"
+              src="https://open.spotify.com/embed/album/5oAbuZZl1FFztjAOSu3lzC?utm_source=generator&theme=0"
+              width="100%" height="152"
+              allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
+              loading="lazy"></iframe>
+            <iframe style="border-radius:8px;border:none;display:block;"
+              src="https://open.spotify.com/embed/album/5Oa9YAFKRTAaiZpTKHAHa5?utm_source=generator&theme=0"
+              width="100%" height="152"
+              allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
+              loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title">Video</div>
+          <div class="artist-video-list">
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=D3ZFtSoWtRc','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/D3ZFtSoWtRc/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="D3ZFtSoWtRc">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=uUXKRemQZ7w','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/uUXKRemQZ7w/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="uUXKRemQZ7w">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+            <div class="artist-video-row" onclick="window.open('https://youtube.com/watch?v=0F6EQCfoi0o','_blank')">
+              <div class="artist-video-thumb"><div class="yt-thumb-wrap"><img src="https://img.youtube.com/vi/0F6EQCfoi0o/hqdefault.jpg" loading="lazy"><div class="yt-play">▶</div></div>
+            </div>
+              <div class="artist-video-info"><div class="artist-video-title" data-ytid="0F6EQCfoi0o">—</div><div class="artist-video-type">Video</div></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /profile-mommyson -->
+
+    </div><!-- /artist-profile-view -->
+  </div><!-- /inner -->
+
+  <div class="inner">
+    <footer class="page-footer" style="padding-left:0; padding-right:0;">
+      <span>Beautiful Noise © 2026</span>
+      <a href="mailto:officialbeautifulnoise@gmail.com">officialbeautifulnoise@gmail.com</a>
+    </footer>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     RELEASES
+══════════════════════════════ -->
+<div class="page" id="page-releases">
+  <div class="inner">
+    <div class="page-header">
+      <h1><span data-en>Releases</span><span data-ko>발매</span></h1>
+    </div>
+    <div id="releases-art-grid" class="releases-art-grid">
+      <!-- JS로 oEmbed 아트워크 또는 compact embed 렌더링 -->
+    </div>
+    <footer class="page-footer">
+      <span>Beautiful Noise © 2026</span>
+      <a href="mailto:officialbeautifulnoise@gmail.com">officialbeautifulnoise@gmail.com</a>
+    </footer>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     VIDEOS
+══════════════════════════════ -->
+<div class="page" id="page-videos">
+  <div class="inner">
+    <div class="page-header">
+      <h1><span data-en>Videos</span><span data-ko>영상</span></h1>
+    </div>
+    <div class="videos-grid" id="videos-grid-container"></div>
+  </div>
+  <div class="inner">
+    <footer class="page-footer" style="padding-left:0; padding-right:0;">
+      <span>Beautiful Noise © 2026</span>
+      <a href="mailto:officialbeautifulnoise@gmail.com">officialbeautifulnoise@gmail.com</a>
+    </footer>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     EVENTS
+══════════════════════════════ -->
+<div class="page" id="page-events">
+  <div class="inner">
+    <div class="page-header">
+      <h1><span data-en>Events</span><span data-ko>공연 · 이벤트</span></h1>
+    </div>
+    <div class="events-list">
+
+      <div class="event-row">
+        <div class="event-date">Oct 4, 2026</div>
+        <div>
+          <div class="event-name">Zior Park — Solo Concert</div>
+          <div class="event-sub">
+            <span data-en>Foro Puebla · 700 cap.</span>
+            <span data-ko>포로 푸에블라 · 700석</span>
+          </div>
+          <span class="event-tag upcoming">
+            <span data-en>Upcoming</span>
+            <span data-ko>예정</span>
+          </span>
+        </div>
+        <div class="event-location">Puebla, Mexico</div>
+      </div>
+
+      <div class="event-row">
+        <div class="event-date">2025</div>
+        <div>
+          <div class="event-name">Sion — European Tour</div>
+          <div class="event-sub">
+            <span data-en>London · Paris · Madrid · Cologne · Berlin · Frankfurt</span>
+            <span data-ko>런던 · 파리 · 마드리드 · 쾰른 · 베를린 · 프랑크푸르트</span>
+          </div>
+          <span class="event-tag">
+            <span data-en>Past</span>
+            <span data-ko>종료</span>
+          </span>
+        </div>
+        <div class="event-location">Europe</div>
+      </div>
+
+      <div class="event-row">
+        <div class="event-date">2024</div>
+        <div>
+          <div class="event-name">Hamburg Reeperbahn Festival</div>
+          <div class="event-sub">Sion</div>
+          <span class="event-tag">
+            <span data-en>Past</span>
+            <span data-ko>종료</span>
+          </span>
+        </div>
+        <div class="event-location">Hamburg, Germany</div>
+      </div>
+
+      <div class="event-row">
+        <div class="event-date">2023</div>
+        <div>
+          <div class="event-name">HITC — Head in the Clouds</div>
+          <div class="event-sub">Zior Park, Sion — 88 Rising</div>
+          <span class="event-tag">
+            <span data-en>Past</span>
+            <span data-ko>종료</span>
+          </span>
+        </div>
+        <div class="event-location">Los Angeles, USA</div>
+      </div>
+
+    </div>
+  </div>
+  <div class="inner">
+    <footer class="page-footer" style="padding-left:0; padding-right:0;">
+      <span>Beautiful Noise © 2026</span>
+      <a href="mailto:officialbeautifulnoise@gmail.com">officialbeautifulnoise@gmail.com</a>
+    </footer>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     NEWS
+══════════════════════════════ -->
+<div class="page" id="page-news">
+  <div class="inner">
+    <div class="page-header">
+      <h1><span data-en>News</span><span data-ko>뉴스</span></h1>
+    </div>
+
+    <div class="news-articles">
+      <!-- ─── 2026 ─────────────────────────────────────── -->
+
+      <!-- ─── BN release announcements ───────────────────────── -->
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Mar 2026</div>
+          <div class="news-article-headline">
+            <div class="news-en">Ahfoné signs to Beautiful Noise — debut single "wantu2stay" out now</div>
+            <div class="news-ko">아포네, 뷰티플노이즈 합류 — 데뷔 싱글 "wantu2stay" 발매</div>
+          </div>
+          <div class="news-article-src">BN</div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">Beautiful Noise officially announces the signing of Ahfoné, a Seoul-based artist working at the intersection of hyperpop, hip-hop, and experimental sound design. His debut release under the label, "wantu2stay," is out now on all major streaming platforms.</p>
+          <p class="news-en" style="margin-top:12px;">Defined by a sharp, restless creative energy and a deeply personal approach to production, Ahfoné introduces himself as one of the most singular new voices entering the scene. The debut release carries an immediacy that feels both constructed and raw — a clear first statement of intent.</p>
+          <p class="news-ko">뷰티플노이즈가 아포네의 합류를 공식 발표한다. 서울 기반 아티스트 아포네는 하이퍼팝, 힙합, 실험적 사운드 디자인의 경계에서 작업하며, 레이블 데뷔 싱글 "wantu2stay"가 전 음원 플랫폼을 통해 공개됐다.</p>
+          <p class="news-ko" style="margin-top:12px;">날카롭고 끊임없는 크리에이티브 에너지와 극히 개인적인 프로덕션 접근법으로 무장한 아포네는 씬에 진입하는 가장 독보적인 새 목소리 중 하나로 스스로를 소개한다. 이 데뷔 작품은 즉각성과 날 것의 질감이 공존하는, 분명한 출발 선언이다.</p>
+        </div>
+      </div>
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Mar 2026</div>
+          <div class="news-article-headline">
+            <div class="news-en">siso — new single "1972" out now</div>
+            <div class="news-ko">시소 — 신곡 "1972" 발매</div>
+          </div>
+          <div class="news-article-src">BN</div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">siso releases "1972," the latest single from her ongoing body of work exploring intimacy, memory, and the quiet places where feelings settle. An indie R&amp;B and bedroom pop artist based in Seoul, siso has been building one of the most distinctive soft-focus sensibilities in Korean independent music.</p>
+          <p class="news-en" style="margin-top:12px;">"1972" continues that trajectory — unhurried, precise, and emotionally transparent. The single is out now on all major streaming platforms.</p>
+          <p class="news-ko">시소가 신곡 "1972"를 발매했다. 서울 기반 인디 R&amp;B / 베드룸 팝 아티스트 시소는 친밀함, 기억, 감정이 조용히 자리 잡는 공간을 탐구하는 일련의 작업을 이어가며 한국 인디 음악에서 가장 독보적인 소프트 포커스 감성을 구축해왔다.</p>
+          <p class="news-ko" style="margin-top:12px;">"1972"는 그 흐름 위에서 서두름 없이, 정확하게, 그리고 감정적으로 투명하게 전개된다. 현재 전 음원 플랫폼에서 공개됐다.</p>
+        </div>
+      </div>
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Feb 2026</div>
+          <div class="news-article-headline">
+            <div class="news-en">Sion — new single "firefly" out now</div>
+            <div class="news-ko">시온 — 신곡 "firefly" 발매</div>
+          </div>
+          <div class="news-article-src">BN</div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">Sion releases "firefly," a new single that expands his ongoing synthesis of jazz, glitch hop, and indie rock into something quieter and more intimate. A self-taught singer, songwriter, and producer, Sion has built a sound that resists easy classification — one that shifts freely between introspection and intensity.</p>
+          <p class="news-en" style="margin-top:12px;">"firefly" finds him in a more reflective mode, without losing the restless energy that has defined his previous work. The single is out now on all major streaming platforms.</p>
+          <p class="news-ko">시온이 신곡 "firefly"를 발매했다. 재즈, 글리치 홉, 인디 록의 합성을 이어가는 이 작품은 보다 조용하고 내밀한 방향으로 전개된다. 독학으로 성장한 싱어송라이터이자 프로듀서인 시온은 쉽게 분류되지 않는 사운드 — 내성과 강렬함 사이를 자유롭게 오가는 음악을 구축해왔다.</p>
+          <p class="news-ko" style="margin-top:12px;">"firefly"에서 시온은 이전 작업을 관통했던 에너지를 유지하면서도 보다 성찰적인 모드로 진입한다. 현재 전 음원 플랫폼에서 공개됐다.</p>
+        </div>
+      </div>
+
+      <!-- ─── EXTERNAL PRESS — Sion ──────────────────────────── -->
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Jan 2026</div>
+          <div class="news-article-headline">
+            <div class="news-en">Sion — "eigensinn" in-depth interview: WEEAVE Magazine</div>
+            <div class="news-ko">시온 — WEEAVE Magazine 인터뷰: eigensinn의 형태와 중심</div>
+          </div>
+          <div class="news-article-src"><a href="https://weeavemagazine.com/2026/01/11/interview-sion-instinct-detail-and-a-new-center-of-gravity-how-eigensinn-found-its-shape/" target="_blank" onclick="event.stopPropagation()">WEEAVE</a></div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">WEEAVE Magazine publishes an in-depth interview with Sion discussing the instinct, detail, and creative center of gravity behind the <em>eigensinn</em> EP. Sion talks about the tension between control and instinct in his production process, and how the EP represents a new phase of self-trust.</p>
+          <p class="news-ko">WEEAVE Magazine이 시온의 <em>eigensinn</em> EP 제작 과정과 창작의 무게중심에 대한 심층 인터뷰를 게재했다. 프로덕션 과정에서의 통제와 본능 사이의 긴장감, 그리고 이 EP가 어떻게 새로운 자기 신뢰의 단계를 의미하는지 이야기한다.</p>
+        </div>
+      </div>
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Dec 2025</div>
+          <div class="news-article-headline">
+            <div class="news-en">Sion — "Digicore begins where identity ends": TITLE Magazine feature</div>
+            <div class="news-ko">시온 — TITLE Magazine 피처: "정체성이 끝나는 곳에서 디지코어가 시작된다"</div>
+          </div>
+          <div class="news-article-src"><a href="https://title-mag.com/digicore-begins-where-identity-ends-sion-resets-hyperpop/" target="_blank" onclick="event.stopPropagation()">TITLE</a></div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">TITLE Magazine profiles Sion on his musical identity in a digital age, the new energy in <em>eigensinn</em>, and what it means to reset. Sion discusses his inspiration from Japan's digicore scene: "The way they tweak and break boundaries of pop music and create their own soundscape really inspired me to do more with my music."</p>
+          <p class="news-ko">TITLE Magazine이 시온의 디지털 시대 속 음악적 정체성과 <em>eigensinn</em> EP의 새로운 에너지에 대한 피처를 게재했다. 시온은 일본 디지코어 씬으로부터 받은 영감에 대해 "그들이 팝 음악의 경계를 비틀고 부수며 자신만의 사운드스케이프를 만드는 방식이 나에게 더 많은 것을 시도하게 했다"고 말했다.</p>
+        </div>
+      </div>
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Oct 2025</div>
+          <div class="news-article-headline">
+            <div class="news-en">Sion — eigensinn EP interview: Spincoaster (Japan)</div>
+            <div class="news-ko">시온 — eigensinn EP 인터뷰: 일본 Spincoaster</div>
+          </div>
+          <div class="news-article-src"><a href="https://spincoaster.com/interview-sion-eigensinn" target="_blank" onclick="event.stopPropagation()">Spincoaster</a></div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">Japanese music outlet Spincoaster covers Sion's fourth EP <em>eigensinn</em>, released September 26, 2025. The interview explores his trajectory from appearing on The Voice Germany (2021) to relocating to Korea and joining Beautiful Noise, and the hyperpop/digicore direction of the new record.</p>
+          <p class="news-ko">일본 음악 미디어 Spincoaster가 시온의 네 번째 EP <em>eigensinn</em>(2025.09.26)을 다루는 인터뷰를 게재했다. 2021년 독일 The Voice 출연부터 한국으로 활동 기반을 옮겨 뷰티플노이즈에 합류하기까지의 과정, 그리고 하이퍼팝/디지코어 방향으로의 전환이 주요 내용이다.</p>
+        </div>
+      </div>
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Sep 2025</div>
+          <div class="news-article-headline">
+            <div class="news-en">Sion — eigensinn Tour: London concert review (London Korean Links)</div>
+            <div class="news-ko">시온 — eigensinn 투어: 런던 공연 리뷰 (London Korean Links)</div>
+          </div>
+          <div class="news-article-src"><a href="https://londonkoreanlinks.net/2025/07/27/sion-eigensinn-tour-in-london/" target="_blank" onclick="event.stopPropagation()">LKL</a></div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">London Korean Links reviews Sion's eigensinn London tour date, documenting his European live presence and the reception of the new hyperpop material in the UK market.</p>
+          <p class="news-ko">London Korean Links가 시온의 eigensinn 투어 런던 공연을 리뷰했다. 유럽 라이브 현장과 영국 시장에서의 새 하이퍼팝 음악 반응을 기록했다.</p>
+        </div>
+      </div>
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Sep 2025</div>
+          <div class="news-article-headline">
+            <div class="news-en">Sion — exclusive interview: KPop Concerts Europe</div>
+            <div class="news-ko">시온 — KPop Concerts Europe 단독 인터뷰</div>
+          </div>
+          <div class="news-article-src"><a href="https://www.kpopconcertseurope.com/post/exclusive-interview-with-sion" target="_blank" onclick="event.stopPropagation()">KPCE</a></div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">KPop Concerts Europe publishes an exclusive interview with Sion ahead of his European tour in support of the <em>eigensinn</em> EP, discussing the album concept, his German roots, and performing internationally.</p>
+          <p class="news-ko">KPop Concerts Europe가 <em>eigensinn</em> EP 유럽 투어를 앞두고 시온의 단독 인터뷰를 게재했다. 앨범 컨셉, 독일 출신 배경, 해외 공연에 대한 내용을 다룬다.</p>
+        </div>
+      </div>
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Dec 2024</div>
+          <div class="news-article-headline">
+            <div class="news-en">Sion — sociavoidance interview: Metal Magazine</div>
+            <div class="news-ko">시온 — Metal Magazine 인터뷰: sociavoidance</div>
+          </div>
+          <div class="news-article-src"><a href="https://metalmagazine.eu/en/post/sion-2" target="_blank" onclick="event.stopPropagation()">Metal</a></div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">Metal Magazine interviews Sion on <em>sociavoidance</em>, describing it as an album born from a harsh personal experience. Sion discusses the tension between social anxiety and the compulsion to connect, themes that run throughout the record.</p>
+          <p class="news-ko">Metal Magazine이 <em>sociavoidance</em>에 대한 시온 인터뷰를 게재했다. 시온은 이 앨범이 개인적으로 힘든 경험에서 탄생했다고 밝히며, 사회적 불안과 연결에 대한 강박 사이의 긴장감을 이야기한다.</p>
+        </div>
+      </div>
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Nov 2024</div>
+          <div class="news-article-headline">
+            <div class="news-en">Sion — "A rebellion against K-pop structures": German / European press roundup</div>
+            <div class="news-ko">시온 — "K팝 구조에 대한 반항": 독일·유럽 언론 피처</div>
+          </div>
+          <div class="news-article-src">EU Press</div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">Following Sion's appearance at Reeperbahn Festival 2024 in Hamburg, several European outlets run features: <a href="https://starzone.ch/de/page/sion-eine-rebellion-gegen-die-k-pop-strukturen" target="_blank">Starzone CH</a> ("A rebellion against K-pop structures"), <a href="https://thecircle.de/en/blogs/popkultur/ein-gesprach-mit-sion-es-ist-k-hyper-pop" target="_blank">The Circle DE</a> ("It's K-hyperpop"), <a href="https://diffus.de/p/sion-von-coversongs-aus-bielefeld-zu-k-hyperpop-aus-seoul/" target="_blank">Diffus DE</a> ("From cover songs in Bielefeld to K-hyperpop in Seoul"), and <a href="https://fastforward-magazine.de/sion-im-interview-sobald-ich-meine-musik-fuer-publikum-veraendere-ist-es-nicht-mehr-meine-musik/" target="_blank">Fast Forward DE</a> ("As soon as I change my music for an audience, it's no longer my music").</p>
+          <p class="news-ko">시온의 2024 함부르크 리퍼반 페스티벌 출연 이후, 여러 유럽 언론이 피처를 게재했다: <a href="https://starzone.ch/de/page/sion-eine-rebellion-gegen-die-k-pop-strukturen" target="_blank">Starzone CH</a> ("K팝 구조에 대한 반항"), <a href="https://thecircle.de/en/blogs/popkultur/ein-gesprach-mit-sion-es-ist-k-hyper-pop" target="_blank">The Circle DE</a> ("K-하이퍼팝이다"), <a href="https://diffus.de/p/sion-von-coversongs-aus-bielefeld-zu-k-hyperpop-aus-seoul/" target="_blank">Diffus DE</a> ("빌레펠트의 커버송에서 서울의 K-하이퍼팝으로"), <a href="https://fastforward-magazine.de/sion-im-interview-sobald-ich-meine-musik-fuer-publikum-veraendere-ist-es-nicht-mehr-meine-musik/" target="_blank">Fast Forward DE</a> ("관객을 위해 음악을 바꾸는 순간, 그건 더 이상 내 음악이 아니다").</p>
+        </div>
+      </div>
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Oct 2024</div>
+          <div class="news-article-headline">
+            <div class="news-en">Sion — 15 Questions interview: sociavoidance, Reeperbahn, and identity</div>
+            <div class="news-ko">시온 — 15 Questions 인터뷰: sociavoidance, 리퍼반, 그리고 정체성</div>
+          </div>
+          <div class="news-article-src"><a href="https://www.15questions.net/interview/fifteen-questions-interview-sion/" target="_blank" onclick="event.stopPropagation()">15Q</a></div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">15 Questions interviews Sion following the release of <em>sociavoidance</em> and his performance at Reeperbahn Festival 2024, covering his social experiences, dual cultural identity (German-Korean), and how Beautiful Noise supports his artistic vision.</p>
+          <p class="news-ko">15 Questions가 <em>sociavoidance</em> 발매와 2024 리퍼반 페스티벌 출연 이후 시온을 인터뷰했다. 사회적 경험, 한-독 이중 문화 정체성, 그리고 뷰티플노이즈가 그의 예술적 비전을 어떻게 지지하는지를 다룬다.</p>
+        </div>
+      </div>
+
+      <!-- ─── EXTERNAL PRESS — Zior Park ─────────────────────── -->
+
+      <!-- ─── Zior Park 2025 press ──────────────────────────── -->
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Jul 2025</div>
+          <div class="news-article-headline">
+            <div class="news-en">Zior Park announces "BLOODY DAY" at Foro La Paz, Mexico City — Nov 1, 2025: Latin American press roundup</div>
+            <div class="news-ko">지올팍, 멕시코시티 포로 라 파스 단독 공연 "BLOODY DAY" 발표 — 2025.11.01: 중남미 언론 피처 모음</div>
+          </div>
+          <div class="news-article-src">Press</div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">Following the debut album <em>A BLOODSUCKER</em>, Zior Park announces a return to Mexico City for an intimate solo show — "BLOODY DAY" — at Foro La Paz on November 1, 2025 (500-capacity, Día de Muertos). The announcement draws extensive coverage across Latin American media. Selected outlets: <a href="https://sonica.mx/eventos/2025/07/15/zior-park-en-cdmx-fechas-y-detalles-de-su-concierto" target="_blank" onclick="event.stopPropagation()">Sonica</a> · <a href="https://xiahpop.com/zior-park-mexico-2025-bloody-day" target="_blank" onclick="event.stopPropagation()">Xiahpop</a> · <a href="https://gritaradio.com/zior-park-reventara-el-foro-la-paz-en-noviembre" target="_blank" onclick="event.stopPropagation()">Grita Radio</a> · <a href="https://multianime.com.mx/2025/07/15/zior-park-regresara-a-la-ciudad-de-mexico-el-1-de-noviembre-con-su-show-solista-bloody-day" target="_blank" onclick="event.stopPropagation()">MultiAnime</a> · <a href="https://mundohallyu.com/zior-park-regresa-a-mexico-con-su-show-bloody-day" target="_blank" onclick="event.stopPropagation()">Mundo Hallyu</a> · <a href="https://adn40.mx/cultura/2025-07-16/zior-park-regresa-a-mexico-tras-exito-rotundo-en-tierra-azteca" target="_blank" onclick="event.stopPropagation()">adn40</a> · <a href="https://los40.com.mx/2025/07/26/zior-park-de-vampiro-a-humano-en-a-bloodsucker-su-regreso-a-mexico-inspiracion-y-sorpresas-entrevista-exclusiva" target="_blank" onclick="event.stopPropagation()">LOS40</a> (interview) · <a href="https://marvin.com.mx/entrevista-zior-park-kim-habla-espanol-vampiro" target="_blank" onclick="event.stopPropagation()">Revista Marvin</a> (interview)</p>
+          <p class="news-ko">데뷔 정규앨범 <em>A BLOODSUCKER</em> 발매 후, 지올팍이 2025년 11월 1일 멕시코시티 포로 라 파스(500인 규모, 죽은 자들의 날)에서 단독 공연 "BLOODY DAY"를 개최한다고 발표했다. 발표와 함께 중남미 미디어 전반에서 폭넓게 보도됐다. 주요 언론: <a href="https://sonica.mx/eventos/2025/07/15/zior-park-en-cdmx-fechas-y-detalles-de-su-concierto" target="_blank" onclick="event.stopPropagation()">Sonica</a> · <a href="https://xiahpop.com/zior-park-mexico-2025-bloody-day" target="_blank" onclick="event.stopPropagation()">Xiahpop</a> · <a href="https://gritaradio.com/zior-park-reventara-el-foro-la-paz-en-noviembre" target="_blank" onclick="event.stopPropagation()">Grita Radio</a> · <a href="https://multianime.com.mx/2025/07/15/zior-park-regresara-a-la-ciudad-de-mexico-el-1-de-noviembre-con-su-show-solista-bloody-day" target="_blank" onclick="event.stopPropagation()">MultiAnime</a> · <a href="https://mundohallyu.com/zior-park-regresa-a-mexico-con-su-show-bloody-day" target="_blank" onclick="event.stopPropagation()">Mundo Hallyu</a> · <a href="https://adn40.mx/cultura/2025-07-16/zior-park-regresa-a-mexico-tras-exito-rotundo-en-tierra-azteca" target="_blank" onclick="event.stopPropagation()">adn40</a> · <a href="https://los40.com.mx/2025/07/26/zior-park-de-vampiro-a-humano-en-a-bloodsucker-su-regreso-a-mexico-inspiracion-y-sorpresas-entrevista-exclusiva" target="_blank" onclick="event.stopPropagation()">LOS40</a> (인터뷰) · <a href="https://marvin.com.mx/entrevista-zior-park-kim-habla-espanol-vampiro" target="_blank" onclick="event.stopPropagation()">Revista Marvin</a> (인터뷰)</p>
+        </div>
+      </div>
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Jun 2025</div>
+          <div class="news-article-headline">
+            <div class="news-en">Zior Park — debut full-length <em>A BLOODSUCKER</em>: Latin American press roundup</div>
+            <div class="news-ko">지올팍 — 데뷔 정규앨범 <em>A BLOODSUCKER</em>: 중남미 언론 피처 모음</div>
+          </div>
+          <div class="news-article-src">Press</div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">Zior Park releases debut full-length <em>A BLOODSUCKER</em> — a 12-track conceptual album exploring obsessive love through the eyes of a vampire protagonist, blending rock alternative, indie, and pop experimental. The release draws broad coverage across Latin American media. Selected outlets: <a href="https://sonica.mx/musica/2025/06/23/zior-park-lanza-su-album-debut-lleno-de-locura-y-obsesion" target="_blank" onclick="event.stopPropagation()">Sonica</a> · <a href="https://milenio.com/espectaculos/musica/zior-park-lanza-a-bloodsucker-primer-album" target="_blank" onclick="event.stopPropagation()">Milenio</a> · <a href="https://publimetro.com.mx/entretenimiento/2025/07/03/zior-park-celebra-lanzamiento-a-bloodsucker-sorpresa-mexico" target="_blank" onclick="event.stopPropagation()">Publimetro</a> · <a href="https://xiahpop.com/zior-park-a-bloodsucker-album-debut" target="_blank" onclick="event.stopPropagation()">Xiahpop</a> · <a href="https://gritaradio.com/zior-park-estrena-su-disco-debut-a-bloodsucker" target="_blank" onclick="event.stopPropagation()">Grita Radio</a> · <a href="https://multianime.com.mx/2025/06/23/zior-park-lanza-su-primer-album-a-bloodsucker-una-historia-de-obsesion-locura-y-redencion" target="_blank" onclick="event.stopPropagation()">MultiAnime</a> · <a href="https://workedmusic.com/zior-park-lanza-su-primer-album-a-bloodsucker-una-historia-de-obsesion-locura-y-redencion" target="_blank" onclick="event.stopPropagation()">Worked Music</a> · <a href="https://plus.cusica.com/2025/06/25/zior-park-lanza-su-primer-album-a-bloodsucker" target="_blank" onclick="event.stopPropagation()">CusicaPlus</a> · <a href="https://geekandlife.com.mx/2025/06/23/zior-park-lanza-su-primer-album-a-bloodsucker" target="_blank" onclick="event.stopPropagation()">Geek&amp;Life</a> · <a href="https://nunasnation.com/zior-park-lanza-su-primer-album-a-bloodsucker" target="_blank" onclick="event.stopPropagation()">Nunas Nation</a></p>
+          <p class="news-ko">지올팍이 데뷔 정규앨범 <em>A BLOODSUCKER</em>를 발매했다. 뱀파이어 주인공의 시점으로 집착적 사랑을 탐구하는 12트랙 컨셉 앨범으로, 록 얼터너티브·인디·팝 실험이 융합된 작품이다. 발매와 함께 중남미 미디어 전반에서 폭넓은 커버리지를 받았다. 주요 언론: <a href="https://sonica.mx/musica/2025/06/23/zior-park-lanza-su-album-debut-lleno-de-locura-y-obsesion" target="_blank" onclick="event.stopPropagation()">Sonica</a> · <a href="https://milenio.com/espectaculos/musica/zior-park-lanza-a-bloodsucker-primer-album" target="_blank" onclick="event.stopPropagation()">Milenio</a> · <a href="https://publimetro.com.mx/entretenimiento/2025/07/03/zior-park-celebra-lanzamiento-a-bloodsucker-sorpresa-mexico" target="_blank" onclick="event.stopPropagation()">Publimetro</a> · <a href="https://xiahpop.com/zior-park-a-bloodsucker-album-debut" target="_blank" onclick="event.stopPropagation()">Xiahpop</a> · <a href="https://gritaradio.com/zior-park-estrena-su-disco-debut-a-bloodsucker" target="_blank" onclick="event.stopPropagation()">Grita Radio</a> · <a href="https://multianime.com.mx/2025/06/23/zior-park-lanza-su-primer-album-a-bloodsucker-una-historia-de-obsesion-locura-y-redencion" target="_blank" onclick="event.stopPropagation()">MultiAnime</a> · <a href="https://workedmusic.com/zior-park-lanza-su-primer-album-a-bloodsucker-una-historia-de-obsesion-locura-y-redencion" target="_blank" onclick="event.stopPropagation()">Worked Music</a> · <a href="https://plus.cusica.com/2025/06/25/zior-park-lanza-su-primer-album-a-bloodsucker" target="_blank" onclick="event.stopPropagation()">CusicaPlus</a> · <a href="https://geekandlife.com.mx/2025/06/23/zior-park-lanza-su-primer-album-a-bloodsucker" target="_blank" onclick="event.stopPropagation()">Geek&amp;Life</a> · <a href="https://nunasnation.com/zior-park-lanza-su-primer-album-a-bloodsucker" target="_blank" onclick="event.stopPropagation()">Nunas Nation</a></p>
+        </div>
+      </div>
+
+      <!-- ─── Zior Park Mexico 2024 press ──────────────────────── -->
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Nov 2024</div>
+          <div class="news-article-headline">
+            <div class="news-en">Zior Park's first Mexico concert "Rest in Peace" — sold out, Day of the Dead (Bajo Circuito)</div>
+            <div class="news-ko">지올팍 첫 멕시코 단독 공연 "Rest in Peace" — 전석 매진, 죽은 자들의 날 (Bajo Circuito)</div>
+          </div>
+          <div class="news-article-src">Press</div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">Zior Park performs his first-ever Mexico concert — "Rest in Peace: Zior Park" — on November 10, 2024 at Bajo Circuito, Mexico City. Tickets sold out on the day of announcement; a venue change was made to accommodate demand. The show coincides with the Day of the Dead celebrations, a synergy with his gothic, emotionally intense aesthetic that fans embraced. Coverage: <a href="https://heraldodemexico.com.mx/espectaculos/2024/9/23/zior-park-llega-mexico-con-rest-in-peace-por-primera-vez-precio-venta-de-boletos-640024.html" target="_blank">El Heraldo de México</a> · <a href="https://robotto.mx/2024/09/zior-park-llega-por-primera-vez-a-mexico-en-bajo-circuito/" target="_blank">Robotto.mx</a></p>
+          <p class="news-ko">지올팍이 2024년 11월 10일, 멕시코시티 Bajo Circuito에서 첫 단독 공연 "Rest in Peace: Zior Park"을 개최한다. 발표 당일 전석 매진. 높은 수요로 인해 공연장 변경이 이루어졌다. 공연은 죽은 자들의 날(Día de los Muertos)과 맞물려 지올팍의 고딕·감성적 미학과 시너지를 이뤘다. 관련 언론: <a href="https://heraldodemexico.com.mx/espectaculos/2024/9/23/zior-park-llega-mexico-con-rest-in-peace-por-primera-vez-precio-venta-de-boletos-640024.html" target="_blank">El Heraldo de México</a> · <a href="https://robotto.mx/2024/09/zior-park-llega-por-primera-vez-a-mexico-en-bajo-circuito/" target="_blank">Robotto.mx</a></p>
+        </div>
+      </div>
+
+      <div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">Oct 2024</div>
+          <div class="news-article-headline">
+            <div class="news-en">Zior Park — "9 Korean Alternative Artists to Know": Grammy.com</div>
+            <div class="news-ko">지올팍 — Grammy.com 선정 "알아야 할 한국 얼터너티브 아티스트 9인"</div>
+          </div>
+          <div class="news-article-src"><a href="https://www.grammy.com/news/korean-alternative-artists-to-know-jiwoo-zior-park-huh-videos" target="_blank" onclick="event.stopPropagation()">Grammy</a></div>
+        </div>
+        <div class="news-article-body">
+          <p class="news-en">Grammy.com names Zior Park in their roundup of Korean alternative artists to know, alongside Jiwoo, Huh, and others. The feature highlights his genre-blending alt-pop sound, cult following across Asia, and innovative music video aesthetic since his debut in 2018.</p>
+          <p class="news-ko">Grammy.com이 Jiwoo, Huh 등과 함께 지올팍을 "알아야 할 한국 얼터너티브 아티스트" 중 하나로 선정했다. 2018년 데뷔 이후 아시아 전역에서 형성된 컬트 팬덤, 장르를 넘나드는 얼터팝 사운드, 독창적인 뮤직비디오 미학이 소개됐다.</p>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+  <div class="inner">
+    <footer class="page-footer" style="padding-left:0; padding-right:0;">
+      <span>Beautiful Noise © 2026</span>
+      <a href="mailto:officialbeautifulnoise@gmail.com">officialbeautifulnoise@gmail.com</a>
+    </footer>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     ABOUT
+══════════════════════════════ -->
+<div class="page" id="page-about">
+  <div class="inner">
+
+    <div class="about-logo-wrap">
+      <img src="assets/logo/bn-logo.png" alt="Beautiful Noise">
+    </div>
+
+    <div class="about-block">
+      <div class="about-label">
+        <span data-en>About</span>
+        <span data-ko>소개</span>
+      </div>
+      <div class="about-text">
+        <p data-en>Beautiful Noise is an independent record label and creative collective based in Seoul, shaping the next phase of music culture by merging music, art, content, and storytelling into one vision.</p>
+        <p data-en style="margin-top:18px;">Our mission is to discover and develop unconventional, highly talented artists and build a sustainable model where unique artistry and commercial success coexist — supported by creative strategies, content-driven IP, and global collaborations.</p>
+        <p data-en style="margin-top:18px;">We cultivate distinctive, multi-dimensional artists who reflect today's culture and create immersive stories through music, visuals, events, and experimental content — turning each artist into unique IP that drives loyal fandoms and global impact.</p>
+        <p data-ko>Beautiful Noise는 서울 기반의 독립 레이블이자 크리에이티브 콜렉티브다. 음악, 아트, 콘텐츠, 스토리텔링을 하나의 비전으로 융합하며 음악 문화의 다음 국면을 만들어간다.</p>
+        <p data-ko style="margin-top:18px;">우리의 미션은 비전형적이고 뛰어난 재능을 가진 아티스트를 발굴·육성하고, 독창적 예술성과 상업적 성공이 공존하는 지속 가능한 모델을 구축하는 것이다 — 창의적 전략, 콘텐츠 기반 IP, 글로벌 협업을 통해.</p>
+        <p data-ko style="margin-top:18px;">우리는 오늘의 문화를 반영하는 입체적인 아티스트를 육성하고, 음악·비주얼·이벤트·실험적 콘텐츠를 통해 몰입적인 이야기를 만들어낸다 — 각 아티스트를 충성도 높은 팬덤과 글로벌 임팩트를 이끄는 고유한 IP로 전환하며.</p>
+      </div>
+    </div>
+
+    <div class="about-block">
+      <div class="about-label">Contact</div>
+      <div class="about-text">
+        <p>
+          <a href="mailto:officialbeautifulnoise@gmail.com" style="color:var(--text); text-decoration:none; transition:opacity 0.2s;" onmouseover="this.style.opacity=0.6" onmouseout="this.style.opacity=1">
+            officialbeautifulnoise@gmail.com
+          </a>
+        </p>
+        <p style="margin-top:8px; color:var(--muted); font-size:13px; line-height:1.7;">
+          5F, 111 Jandari-ro, Mapo-gu, Seoul<br>
+          Republic of Korea 04003
+        </p>
+        <p style="margin-top:20px; font-size:13px; line-height:2.2;">
+          <a href="https://www.instagram.com/officialbeautifulnoise/" target="_blank" style="color:var(--muted); text-decoration:none; display:block; transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Instagram ↗</a>
+          <a href="https://www.youtube.com/@Beautiful_Noise" target="_blank" style="color:var(--muted); text-decoration:none; display:block; transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">YouTube ↗</a>
+          <a href="https://www.tiktok.com/@officialbeautifulnoise" target="_blank" style="color:var(--muted); text-decoration:none; display:block; transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">TikTok ↗</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+  <div class="inner">
+    <footer class="page-footer" style="padding-left:0; padding-right:0;">
+      <span>Beautiful Noise © 2026</span>
+      <a href="mailto:officialbeautifulnoise@gmail.com">officialbeautifulnoise@gmail.com</a>
+    </footer>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     JS
+══════════════════════════════ -->
+<script>
+  const PAGES = ['home','news','artists','releases','videos','events','about'];
+
+
+  // ── Releases: oEmbed 아트워크 그리드 ─────────────────────────────────────
+  let _relInited = false;
+  function initReleasesGrid() {
+    if (_relInited) return;
+    _relInited = true;
+    const grid = document.getElementById('releases-art-grid');
+    if (!grid) return;
+
+    // 1단계: compact embed로 즉시 렌더링 (fallback)
+    grid.innerHTML = RELEASES.map((r, i) => `
+      <div class="rel-card" id="rcard-${i}">
+        <div class="rel-art-wrap loading" id="rawrap-${i}">
+          <iframe
+            src="https://open.spotify.com/embed/${r.type}/${r.id}?utm_source=generator&theme=0"
+            width="100%" height="80" loading="lazy"
+            style="border:none;border-radius:6px;"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+          </iframe>
+        </div>
+        <div class="rel-info">
+          <div class="rel-artist">${r.artist}</div>
+          <div class="rel-title">${r.title}</div>
+        </div>
+      </div>`).join('');
+
+    // 2단계: oEmbed로 아트워크 업그레이드
+    RELEASES.forEach(async (r, i) => {
+      try {
+        const res = await fetch(
+          `https://open.spotify.com/oembed?url=https://open.spotify.com/${r.type}/${r.id}`,
+          { mode: 'cors' }
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data.thumbnail_url) return;
+        const wrap = document.getElementById('rawrap-' + i);
+        if (!wrap) return;
+        wrap.classList.remove('loading');
+        wrap.innerHTML = `
+          <a href="https://open.spotify.com/${r.type}/${r.id}" target="_blank" rel="noopener" class="rel-art-link">
+            <img src="${data.thumbnail_url}" alt="${r.artist} — ${r.title}" loading="lazy" class="rel-art-img">
+            <div class="rel-art-overlay">
+              <svg viewBox="0 0 48 48" width="48" height="48">
+                <circle cx="24" cy="24" r="24" fill="rgba(0,0,0,0.55)"/>
+                <polygon points="19,14 19,34 36,24" fill="white"/>
+              </svg>
+            </div>
+          </a>`;
+      } catch(e) { /* compact embed 유지 */ }
+    });
+  }
+
+  function showPage(id) {
+    PAGES.forEach(p => {
+      const el = document.getElementById('page-' + p);
+      const nav = document.getElementById('nav-' + p);
+      if (el) el.classList.remove('active');
+      if (nav) nav.classList.remove('active');
+    });
+    const target = document.getElementById('page-' + id);
+    const targetNav = document.getElementById('nav-' + id);
+    if (target) target.classList.add('active');
+    if (targetNav) targetNav.classList.add('active');
+    window.scrollTo(0, 0);
+    if (id !== 'artists') backToGrid();
+    if (id === 'videos') renderVideosGrid();
+    if (id === 'releases') initReleasesGrid();
+  }
+
+  function openArtist(id) {
+    const gridView = document.getElementById('artists-grid-view');
+    const profileView = document.getElementById('artist-profile-view');
+    if (gridView) gridView.style.display = 'none';
+    if (profileView) profileView.style.display = 'block';
+    document.querySelectorAll('.artist-profile').forEach(p => p.classList.remove('active'));
+    const prof = document.getElementById('profile-' + id);
+    if (prof) {
+      prof.classList.add('active');
+      loadYtTitles(prof);
+    }
+    window.scrollTo(0, 0);
+  }
+
+  function backToGrid() {
+    const gridView = document.getElementById('artists-grid-view');
+    const profileView = document.getElementById('artist-profile-view');
+    if (gridView) gridView.style.display = 'block';
+    if (profileView) profileView.style.display = 'none';
+    document.querySelectorAll('.artist-profile').forEach(p => p.classList.remove('active'));
+  }
+
+  function setLang(lang) {
+    document.body.classList.toggle('ko', lang === 'ko');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
+    localStorage.setItem('bn-lang', lang);
+  }
+
+  function toggleNews(el) {
+    el.classList.toggle('open');
+  }
+
+  // ══════════════════════════════════════════════════════
+  //  RELEASES DATA — 날짜(date) 수정 시 자동으로 newest→oldest 정렬
+  //  새 릴리즈 추가 시: { id:'스포티파이ID', type:'album'|'track', artist:'...', title:'...', date:'YYYY-MM-DD' }
+  // ══════════════════════════════════════════════════════
+  const RELEASES = [
+    { id: '17VMhrJFeiCHuahzjVzpew', type: 'album', artist: 'Ahfoné',    title: 'wantu2stay',                            date: '2026-03-17' },
+    { id: '0KGYduvgnJpyuBwjEmIyZr', type: 'album', artist: 'siso',      title: '1972',                                  date: '2026-03-15' },
+    { id: '6POxibMWodpZmXdkkV97Lf', type: 'album', artist: 'Sion',      title: 'firefly',                               date: '2026-02-15' },
+    { id: '4OZQOLmpjv7wXSISHcgpL3', type: 'album', artist: 'Alice U',   title: 'i wanna hate you (Feat. Alice U)',      date: '2026-01-30' },
+    { id: '15XP68PNMORaE2xmbxyf3P', type: 'album', artist: 'Sion',      title: 'braindead2',                            date: '2025-12-13' },
+    { id: '1LULxDQtvUx6miaSB3nTaY', type: 'album', artist: 'siso',      title: 'Dive!',                                 date: '2025-10-05' },
+    { id: '5oHPjdcJM6hiYNbFVNAJUg', type: 'album', artist: 'Sion',      title: 'eigensinn',                             date: '2025-09-26' },
+    { id: '2WgflQMGnxYqAbCq3CS4PM', type: 'album', artist: 'gyun',      title: 'dogdays',                               date: '2025-08-23' },
+    { id: '3r5Tzrgw9TKGmAEwFvUGNi', type: 'album', artist: 'Mad Clown', title: 'Anything Goes II',                      date: '2025-07-28' },
+    { id: '4MqSOAUx06i8FBWbPCMKSQ', type: 'album', artist: 'Zior Park', title: 'A BLOODSUCKER',                         date: '2025-06-18' },
+    { id: '14CUSx8Br1OuPQmsXNnyd6', type: 'album', artist: 'siso',      title: '__에게.',                                date: '2025-06-05' },
+    { id: '1WeXuEY2C5ovaPxuTNvhlF', type: 'album', artist: 'Sion',      title: 'FROG (Feat. 1tbsp)',                    date: '2025-05-29' },
+    { id: '4M1Bmg5I4vDoRlIKo3DDAc', type: 'album', artist: 'gyun',      title: 'PSEUDO 2.0',                            date: '2025-04-14' },
+    { id: '5omjfr4eSU1xPjcYtc714V', type: 'album', artist: 'Alice U',   title: 'Deep Dialogue',                         date: '2025-02-20' },
+    { id: '2BOen4w2p22PFO5XTXoAMY', type: 'album', artist: 'siso',      title: '왜 날 사랑하게 만들어요?',               date: '2024-12-14' },
+    { id: '2wm10RxvtwcvIKFaJLin62', type: 'album', artist: 'gyun',      title: 'STRESSED OUT',                          date: '2024-08-20' },
+    { id: '1OilSmtDUQouwzr8Dp6ATu', type: 'album', artist: 'siso',      title: '영원미학',                               date: '2024-08-11' },
+    { id: '6FLq4oUbZayLAVuMobzgo1', type: 'album', artist: 'siso',      title: '사랑네컷 (Prod. 윤토벤)',                date: '2024-07-09' },
+    { id: '6QvwA1sCAvYGRxLzTctp8v', type: 'album', artist: 'Sion',      title: 'sociavoidance',                         date: '2024-06-16' },
+    { id: '6LmkkkXUI3esLEAEdJYUA3', type: 'album', artist: 'Zior Park', title: 'Ashes (Feat. Ai Tomioka)',              date: '2024-05-23' },
+    { id: '1uoKuIK0h6NA2etnMky8iX', type: 'album', artist: 'gyun',      title: 'PSEUDO 1.0',                            date: '2024-04-28' },
+    { id: '1HekNS17rFw2vtSmnl5Ty3', type: 'album', artist: 'Sion',      title: 'O.o',                                   date: '2024-02-14' },
+    { id: '4d7wbTuRfhy1YJwCueEoAX', type: 'album', artist: 'Zior Park', title: 'WHERE DOES THE SASQUATCH LIVE? PART 2', date: '2023-11-02' },
+    { id: '79vgtnhjVpKDS8GpWsu1Sp', type: 'album', artist: 'Sion',      title: 'Live',                                  date: '2023-03-18' },
+    { id: '0VHARY3e2b5F5OSCe9l8vx', type: 'album', artist: 'Zior Park', title: 'WHERE DOES THE SASQUATCH LIVE? PART 1', date: '2023-02-16' },
+    { id: '5Y2eg7LXKaXjcDcfaYVgwj', type: 'album', artist: 'Sion',      title: 'Braindead',                             date: '2022-09-13' },
+    { id: '600af5WWeNaasoZFOzG8DN', type: 'album', artist: 'Sion',      title: 'love',                                  date: '2022-07-23' },
+    { id: '5LVjO5K6RCXoeGxqG5p5lj', type: 'album', artist: 'Zior Park', title: 'Christmas High',                        date: '2021-12-19' },
+    { id: '7yevXWpk0GN0jy79E5rs36', type: 'album', artist: 'Zior Park', title: 'SYNDROMEZ',                             date: '2021-06-03' },
+    { id: '50ZmeOQSnD8c1J0P2BxT2n', type: 'album', artist: 'Zior Park', title: 'Michael',                               date: '2020-11-18' },
+    { id: '5dzlqalQHxbkzkyaMg19En', type: 'album', artist: 'Zior Park', title: 'THUNDERBIRD MOTEL',                     date: '2020-03-30' },
+    { id: '5oAbuZZl1FFztjAOSu3lzC', type: 'album', artist: 'Mommy Son', title: '나의슬픔(My Sadness)',                   date: '2019-11-18' },
+    { id: '7kKvUmDcG2GebFE3gB7IM2', type: 'album', artist: 'Zior Park', title: 'Noise',                                 date: '2019-05-14' },
+    { id: '5Oa9YAFKRTAaiZpTKHAHa5', type: 'album', artist: 'Mommy Son', title: '소년점프',                               date: '2018-11-10' },
+  ];
+
+  // ══════════════════════════════════════════════════════
+  //  VIDEOS DATA — 날짜(date) 수정 시 자동으로 newest→oldest 정렬
+  //  새 영상 추가 시: { id:'유튜브ID', artist:'아티스트명', date:'YYYY-MM-DD' } 추가
+  // ══════════════════════════════════════════════════════
+  const VIDEOS = [
+    // Zior Park
+    { id: 'Dqlr8EDunCM', artist: 'Zior Park', date: '2025-01-01' },
+    { id: '7-xwMY1WfK4',  artist: 'Zior Park', date: '2024-06-01' },
+    { id: 'lHMULh6KNPM', artist: 'Zior Park', date: '2024-03-01' },
+    { id: '6CD5MVJAUR4', artist: 'Zior Park', date: '2023-09-01' },
+    { id: '0PO88Ep78h0', artist: 'Zior Park', date: '2023-03-01' },
+    { id: '4K8oGplWiUI', artist: 'Zior Park', date: '2022-08-01' },
+    { id: '8v4gryjmi9c',  artist: 'Zior Park', date: '2021-11-01' },
+    // Sion
+    { id: 'dOjCOCZ2ydM', artist: 'Sion', date: '2025-08-01' },
+    { id: 'nZSyVtrnPwE', artist: 'Sion', date: '2025-05-01' },
+    { id: '0it1ZwbiJeE',  artist: 'Sion', date: '2025-02-01' },
+    { id: 'gr4zNrHQnZI', artist: 'Sion', date: '2024-10-01' },
+    { id: '3jA8xz8Ba1Q', artist: 'Sion', date: '2024-06-01' },
+    { id: 'ACWHGhi-Ckg', artist: 'Sion', date: '2024-03-01' },
+    { id: 'I_ohKwqTv6I',  artist: 'Sion', date: '2023-07-01' },
+    // siso
+    { id: 'DwhQzQigrw0', artist: 'siso', date: '2025-04-01' },
+    { id: 'Omi-SAnnKAA', artist: 'siso', date: '2024-09-01' },
+    { id: 'a-5nhD8AIQw',  artist: 'siso', date: '2024-04-01' },
+    { id: 'QSmjx75Zbfw', artist: 'siso', date: '2023-10-01' },
+    { id: 'vCM0P2jNLNA', artist: 'siso', date: '2023-04-01' },
+    // gyun
+    { id: 'dnnVhTJtCFQ', artist: 'gyun', date: '2025-09-01' },
+    { id: 'EMx7sH54iSM', artist: 'gyun', date: '2025-06-01' },
+    { id: '6rZjtDKHQro', artist: 'gyun', date: '2025-03-01' },
+    { id: '1rMExceBSmM', artist: 'gyun', date: '2024-11-01' },
+    { id: '8k-Lhx6djjg', artist: 'gyun', date: '2024-08-01' },
+    { id: 'n5h-qC9BxrQ', artist: 'gyun', date: '2024-05-01' },
+    { id: 'KsAwkCQV-lU', artist: 'gyun', date: '2024-01-01' },
+    { id: 'MqEHmfeFO6I', artist: 'gyun', date: '2023-08-01' },
+    // Ahfoné
+    { id: 'bRYphRnent8', artist: 'Ahfoné', date: '2025-10-01' },
+    // Mad Clown
+    { id: '8CiXNQvc3OA', artist: 'Mad Clown', date: '2025-11-01' },
+    { id: 'ekKnNTpm3Cs', artist: 'Mad Clown', date: '2025-07-01' },
+    { id: '4uwfr81eGSk', artist: 'Mad Clown', date: '2025-03-01' },
+    // Mommy Son
+    { id: 'D3ZFtSoWtRc', artist: 'Mommy Son', date: '2025-12-01' },
+    { id: 'uUXKRemQZ7w', artist: 'Mommy Son', date: '2025-09-01' },
+    { id: '0F6EQCfoi0o', artist: 'Mommy Son', date: '2025-06-01' },
+  ];
+
+  // ── Releases: home top-5 + releases page ──────────────────────────────────
+  function renderHomeReleases() {
+    const container = document.getElementById('home-releases-container');
+    if (!container) return;
+    const top6 = RELEASES.slice(0, 6);
+    container.innerHTML = top6.map(r => `
+      <div class="spotify-card">
+        <iframe
+          src="https://open.spotify.com/embed/${r.type}/${r.id}?utm_source=generator&theme=0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+          title="${r.artist} — ${r.title}">
+        </iframe>
+      </div>`).join('');
+  }
+
+
+  // ── Home News — top 5 articles from news page, inline accordion ──────────
+  function renderHomeNews() {
+    const container = document.getElementById('home-news-container');
+    if (!container) return;
+    const articles = document.querySelectorAll('#page-news .news-article');
+    const top5 = [...articles].slice(0, 5);
+    container.innerHTML = top5.map(a => {
+      const date        = a.querySelector('.news-article-date')?.textContent ?? '';
+      const headlineHtml = a.querySelector('.news-article-headline')?.innerHTML ?? '';
+      const srcHtml     = a.querySelector('.news-article-src')?.innerHTML ?? '';
+      const bodyHtml    = a.querySelector('.news-article-body')?.innerHTML ?? '';
+      return `<div class="news-article" onclick="toggleNews(this)">
+        <div class="news-article-header">
+          <div class="news-article-date">${date}</div>
+          <div class="news-article-headline">${headlineHtml}</div>
+          <div class="news-article-src">${srcHtml}</div>
+        </div>
+        <div class="news-article-body">${bodyHtml}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── YouTube Data API v3 설정 ──────────────────────────────────────────────
+  const _YT_API_KEY   = 'AIzaSyCy9HIRaFVEjvyC8lww9r2xjuR0eCpCwY0';
+  const _YT_CACHE_KEY = 'bn-yt-dates-v2'; // v2: 공식 API (이전 proxy 캐시 무효화)
+
+  // ── YouTube publish-date cache (localStorage) ────────────────────────────
+  let _ytDateCache = {};
+  try { _ytDateCache = JSON.parse(localStorage.getItem(_YT_CACHE_KEY) || '{}'); } catch(_) {}
+
+  function _buildVideosHtml(list) {
+    return list.map(v => `
+      <div class="video-cell" onclick="window.open('https://youtube.com/watch?v=${v.id}','_blank')" style="cursor:pointer;">
+        <div class="video-embed">
+          <div class="yt-thumb-wrap">
+            <img src="https://img.youtube.com/vi/${v.id}/hqdefault.jpg" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
+            <div class="yt-play">▶</div>
+          </div>
+        </div>
+        <div class="video-info">
+          <div class="video-artist">${v.artist}</div>
+          <div class="video-title" data-ytid="${v.id}">—</div>
+        </div>
+      </div>`).join('');
+  }
+
+  function _sortedVideos() {
+    return [...VIDEOS]
+      .map(v => ({ ...v, date: _ytDateCache[v.id] || v.date }))
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+
+  function renderVideosGrid() {
+    const container = document.getElementById('videos-grid-container');
+    if (!container) return;
+    container.innerHTML = _buildVideosHtml(_sortedVideos());
+    loadYtTitles(container);
+    // 캐시되지 않은 영상의 실제 날짜를 백그라운드에서 가져와 재정렬
+    const missing = VIDEOS.filter(v => !_ytDateCache[v.id]).map(v => v.id);
+    if (missing.length > 0) _fetchYtDatesAndRefresh(missing, container);
+  }
+
+  // YouTube Data API v3로 실제 업로드 날짜 조회 (어느 채널 영상이든 가능)
+  async function _fetchYtDatesAndRefresh(ids, container) {
+    const CHUNK = 50; // YouTube API 최대 50개/요청
+    for (let i = 0; i < ids.length; i += CHUNK) {
+      const chunk = ids.slice(i, i + CHUNK);
+      try {
+        const res = await fetch(
+          `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${chunk.join(',')}&key=${_YT_API_KEY}&maxResults=50`
+        );
+        if (!res.ok) continue;
+        const data = await res.json();
+        if (!data.items) continue;
+        data.items.forEach(item => {
+          if (item.snippet && item.snippet.publishedAt) {
+            _ytDateCache[item.id] = item.snippet.publishedAt.slice(0, 10);
+          }
+        });
+      } catch (_) {}
+    }
+    try { localStorage.setItem(_YT_CACHE_KEY, JSON.stringify(_ytDateCache)); } catch (_) {}
+    // 실제 날짜 기준으로 재렌더링
+    if (container.isConnected) {
+      container.innerHTML = _buildVideosHtml(_sortedVideos());
+      loadYtTitles(container);
+    }
+  }
+
+  // Init: restore language + render dynamic pages
+  const savedLang = localStorage.getItem('bn-lang');
+  if (savedLang === 'ko') setLang('ko');
+  renderVideosGrid();
+  renderHomeReleases();
+  renderHomeNews();
+  // releases 그리드 초기화 (배경에서 미리 로드)
+  setTimeout(initReleasesGrid, 500);
+
+  // ── YouTube title auto-fetch via oEmbed ──────────────────────────────────
+  const _ytTitleCache = {};
+  async function loadYtTitles(scope) {
+    const els = (scope || document).querySelectorAll('[data-ytid]');
+    await Promise.all(Array.from(els).map(async el => {
+      if (el.dataset.loaded) return;
+      const id = el.dataset.ytid;
+      if (!id) return;
+      try {
+        if (!_ytTitleCache[id]) {
+          const res = await fetch(
+            `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`
+          );
+          if (res.ok) _ytTitleCache[id] = (await res.json()).title;
+        }
+        if (_ytTitleCache[id]) {
+          el.textContent = _ytTitleCache[id];
+          el.dataset.loaded = '1';
+        }
+      } catch (_) {}
+    }));
+  }
+  loadYtTitles();
+</script>
+</body>
+</html>
