@@ -577,8 +577,28 @@
       .nav-center a { font-size: 10px; }
     }
     @media (max-width: 840px) {
-      nav { padding: 0 20px; }
-      .nav-center { position: static; transform: none; display: none; }
+      :root { --nav-h: 90px; }
+      nav {
+        padding: 0 20px;
+        height: var(--nav-h);
+        flex-wrap: wrap;
+        align-content: flex-start;
+        padding-top: 14px;
+        row-gap: 0;
+      }
+      .nav-logo { order: 1; }
+      .nav-right { order: 2; }
+      .nav-center {
+        order: 3;
+        position: static;
+        transform: none;
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        gap: 18px;
+        margin-top: 10px;
+      }
+      .nav-center a { font-size: 9px; letter-spacing: 0.12em; }
       .inner { padding: 0 20px; }
       .home-hero { padding: 60px 20px; }
       .artists-grid { grid-template-columns: repeat(2, 1fr); }
