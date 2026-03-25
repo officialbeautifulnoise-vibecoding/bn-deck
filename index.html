@@ -6,7 +6,7 @@
   <title>Beautiful Noise</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Newsreader:ital,wght@1,300;1,400&family=Space+Grotesk:wght@300;400;500&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
 
     /* ── Reset ── */
@@ -15,16 +15,20 @@
 
     /* ── Tokens ── */
     :root {
-      --bg:       #080808;
-      --bg-2:     #101010;
-      --bg-3:     #181818;
-      --text:     #f0f0f0;
-      --muted:    rgba(240,240,240,0.44);
-      --faint:    rgba(240,240,240,0.09);
-      --border:   rgba(240,240,240,0.08);
+      --bg:       #131313;
+      --bg-2:     #1c1b1b;
+      --bg-3:     #201f1f;
+      --text:     #E5E2E1;
+      --muted:    rgba(229,226,225,0.48);
+      --faint:    rgba(229,226,225,0.07);
+      --border:   rgba(68,69,87,0.38);
+      --accent:   #BCC2FF;
       --nav-h:    56px;
-      --ff-body:  'Helvetica Neue', Helvetica, Arial, 'Noto Sans KR', sans-serif;
-      --ff-ko-hd: 'Do Hyeon', 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      --ff-head:  'Inter', 'Helvetica Neue', sans-serif;
+      --ff-body:  'Inter', 'Noto Sans KR', sans-serif;
+      --ff-serif: 'Newsreader', Georgia, serif;
+      --ff-label: 'Space Grotesk', 'Helvetica Neue', sans-serif;
+      --ff-ko-hd: 'Inter', 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
     }
 
     /* ── Base ── */
@@ -49,9 +53,8 @@
       height: var(--nav-h);
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 40px;
-      background: rgba(8,8,8,0.96);
+      background: linear-gradient(to bottom, rgba(19,19,19,0.97) 0%, rgba(19,19,19,0.85) 100%);
       backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
     }
     .nav-logo {
       cursor: pointer; text-decoration: none; flex-shrink: 0;
@@ -65,7 +68,8 @@
       list-style: none; position: absolute; left: 50%; transform: translateX(-50%);
     }
     .nav-center a {
-      font-size: 11px; font-weight: 400; letter-spacing: 0.16em;
+      font-family: var(--ff-label);
+      font-size: 10px; font-weight: 500; letter-spacing: 0.22em;
       text-transform: uppercase; color: var(--muted);
       text-decoration: none; cursor: pointer; transition: color 0.2s;
       white-space: nowrap;
@@ -73,12 +77,12 @@
     .nav-center a:hover, .nav-center a.active { color: var(--text); }
     .nav-right { display: flex; align-items: center; gap: 0; flex-shrink: 0; }
     .lang-switch {
-      display: flex; border: 1px solid var(--border); border-radius: 2px; overflow: hidden;
+      display: flex; border: 1px solid var(--border); border-radius: 0; overflow: hidden;
     }
     .lang-switch button {
       background: none; border: none; color: var(--muted);
-      font-family: var(--ff-body); font-size: 10px; font-weight: 500;
-      letter-spacing: 0.12em; padding: 4px 10px;
+      font-family: var(--ff-label); font-size: 10px; font-weight: 500;
+      letter-spacing: 0.14em; padding: 4px 10px;
       cursor: pointer; transition: all 0.2s;
     }
     .lang-switch button.active { background: var(--faint); color: var(--text); }
@@ -99,35 +103,79 @@
       border-bottom: 1px solid var(--border);
     }
     .home-eyebrow {
+      font-family: var(--ff-label);
       font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 28px;
+      color: var(--accent); margin-bottom: 24px;
     }
     .home-headline {
-      font-size: clamp(56px, 9.5vw, 148px);
-      font-weight: 800; line-height: 0.96; letter-spacing: -0.035em;
+      font-family: var(--ff-head);
+      font-size: clamp(56px, 11vw, 148px);
+      font-weight: 900; line-height: 0.88; letter-spacing: -0.04em;
+      text-transform: uppercase;
       max-width: 980px;
     }
-    body.ko .home-headline { font-family: var(--ff-ko-hd); font-weight: 700; letter-spacing: -0.02em; }
+    body.ko .home-headline {
+      font-family: var(--ff-ko-hd); font-weight: 900;
+      letter-spacing: -0.04em; text-transform: none; line-height: 1.05;
+    }
     .home-sub {
-      margin-top: 40px; font-size: 13px;
-      color: var(--muted); max-width: 520px; line-height: 1.82;
-      letter-spacing: 0.01em;
+      margin-top: 44px; font-size: 15px;
+      font-family: var(--ff-serif); font-style: italic;
+      color: var(--muted); max-width: 540px; line-height: 1.78;
     }
-    /* ── Home artists list (Dirty Hit style) ── */
-    .home-artists-section {
-      padding: 56px 0 60px;
+    body.ko .home-sub { font-family: var(--ff-body); font-style: normal; font-size: 14px; }
+    /* ── Home Roster Grid ── */
+    .home-roster {
+      display: grid;
+      grid-template-columns: 300px 1fr;
       border-bottom: 1px solid var(--border);
-      text-align: center;
+      max-width: 1280px; margin: 0 auto;
     }
-    .home-artists-list {
-      font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
-      color: var(--muted); line-height: 2.4; max-width: 780px; margin: 0 auto;
+    .home-roster-left {
+      padding: 56px 40px;
+      display: flex; flex-direction: column; justify-content: flex-start;
+      border-right: 1px solid var(--border);
+      overflow: hidden;
     }
-    .home-artists-list a {
-      color: var(--muted); text-decoration: none;
-      transition: color 0.2s;
+    .home-roster-heading {
+      font-family: var(--ff-head);
+      font-size: clamp(32px, 3.2vw, 64px); font-weight: 900;
+      text-transform: uppercase; letter-spacing: -0.04em; line-height: 0.88;
     }
-    .home-artists-list a:hover { color: var(--text); }
+    body.ko .home-roster-heading { font-family: var(--ff-ko-hd); text-transform: none; letter-spacing: 0.01em; line-height: 1.15; }
+    .home-roster-desc {
+      font-family: var(--ff-serif); font-style: italic;
+      font-size: 14px; line-height: 1.72; color: var(--muted);
+      margin-top: 28px;
+    }
+    body.ko .home-roster-desc { font-family: var(--ff-body); font-style: normal; }
+    .home-roster-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .home-roster-card {
+      position: relative; aspect-ratio: 3/4;
+      overflow: hidden; cursor: pointer;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .home-roster-card:nth-child(4n) { border-right: none; }
+    .home-roster-card:nth-child(5), .home-roster-card:nth-child(6),
+    .home-roster-card:nth-child(7), .home-roster-card:nth-child(8) { border-bottom: none; }
+    .home-roster-card img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform 0.6s ease;
+    }
+    .home-roster-card:hover img { transform: scale(1.05); }
+    .home-roster-card-name {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 52px 14px 14px;
+      background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+      font-family: var(--ff-head);
+      font-size: 13px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      color: #fff;
+    }
     /* ── About logo ── */
     .about-logo-wrap {
       padding: 72px 0 60px; border-bottom: 1px solid var(--border);
@@ -138,27 +186,31 @@
 
     /* Section headers */
     .section-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 44px 0 0;
-      border-bottom: 1px solid var(--border); padding-bottom: 18px;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 64px 0 20px;
+      border-bottom: 1px solid var(--border);
     }
     .section-label {
-      font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted);
+      font-family: var(--ff-head);
+      font-size: clamp(36px, 4vw, 72px); font-weight: 900;
+      letter-spacing: -0.04em; text-transform: uppercase;
+      line-height: 0.88; color: var(--text);
     }
+    body.ko .section-label { font-family: var(--ff-ko-hd); text-transform: none; letter-spacing: 0.01em; }
     .section-link {
-      font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+      font-family: var(--ff-label);
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
       color: var(--muted); cursor: pointer; text-decoration: none; transition: color 0.2s;
+      padding-bottom: 6px;
     }
-    .section-link:hover { color: var(--text); }
+    .section-link:hover { color: var(--accent); }
 
-    /* Spotify embeds — home */
-    .spotify-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-      padding: 24px 0 48px;
+    /* Spotify embeds — home (releases-art-grid 재사용) */
+    #home-releases-container {
+      padding-bottom: 48px;
     }
-    .spotify-card {}
     .spotify-card iframe {
-      border-radius: 8px; width: 100%; height: 152px;
+      border-radius: 0; width: 100%; height: 152px;
       border: none; display: block; background: var(--bg-3);
     }
     .spotify-card-label { margin-top: 10px; font-size: 11px; color: var(--muted); }
@@ -174,25 +226,29 @@
     }
     .news-preview-item:last-child { border-bottom: none; padding-bottom: 48px; }
     .news-preview-item:hover { opacity: 0.6; }
-    .news-preview-date { font-size: 11px; color: var(--muted); padding-top: 2px; }
+    .news-preview-date { font-family: var(--ff-label); font-size: 11px; color: var(--muted); padding-top: 2px; }
     .news-preview-title { font-size: 14px; line-height: 1.5; }
 
     /* ══════════════════════════════
        ARTISTS
     ══════════════════════════════ */
     .page-header {
-      padding: 56px 0 40px; border-bottom: 1px solid var(--border);
+      padding: 72px 0 44px; border-bottom: 1px solid var(--border);
     }
     .page-header h1 {
-      font-size: clamp(28px, 4vw, 52px); font-weight: 300; letter-spacing: -0.015em;
+      font-family: var(--ff-head);
+      font-size: clamp(36px, 6vw, 80px); font-weight: 900;
+      text-transform: uppercase; letter-spacing: -0.03em; line-height: 0.92;
     }
-    body.ko .page-header h1 { font-family: var(--ff-ko-hd); font-weight: 400; }
+    body.ko .page-header h1 { font-family: var(--ff-ko-hd); font-weight: 900; text-transform: none; }
     .page-header p {
-      margin-top: 14px; font-size: 13px; color: var(--muted);
+      margin-top: 16px; font-size: 14px; color: var(--muted);
       max-width: 480px; line-height: 1.7;
+      font-family: var(--ff-serif); font-style: italic;
     }
+    body.ko .page-header p { font-family: var(--ff-body); font-style: normal; }
 
-    /* UMG-style artist grid */
+    /* Artist grid */
     .artists-grid {
       display: grid; grid-template-columns: repeat(4, 1fr);
       gap: 0; background: var(--border);
@@ -214,20 +270,24 @@
     }
     .artist-card-photo img {
       width: 100%; height: 100%; object-fit: cover;
-      transition: transform 0.55s ease; display: block;
+      transition: transform 0.6s ease; display: block;
     }
     .artist-card:hover .artist-card-photo img { transform: scale(1.04); }
     .artist-photo-placeholder {
       font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
-      color: rgba(240,240,240,0.1);
+      color: rgba(229,226,225,0.1);
     }
     .artist-card-info { padding: 18px 20px 22px; }
     .artist-card-name {
-      font-size: 17px; font-weight: 500; letter-spacing: -0.01em;
+      font-family: var(--ff-head);
+      font-size: 14px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.02em;
     }
-    body.ko .artist-card-name { font-family: 'Noto Sans KR', sans-serif; }
+    body.ko .artist-card-name { font-family: 'Noto Sans KR', sans-serif; text-transform: none; font-weight: 700; }
     .artist-card-genre {
-      font-size: 11px; color: var(--muted); margin-top: 4px;
+      font-family: var(--ff-label);
+      font-size: 10px; color: var(--muted); margin-top: 5px;
+      letter-spacing: 0.12em;
     }
 
     /* Artist profile */
@@ -235,11 +295,12 @@
     .artist-profile.active { display: block; }
     .profile-back {
       display: inline-flex; align-items: center; gap: 8px;
-      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      font-family: var(--ff-label);
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
       color: var(--muted); cursor: pointer; background: none; border: none;
-      padding: 36px 0 0; transition: color 0.2s; font-family: var(--ff-body);
+      padding: 36px 0 0; transition: color 0.2s;
     }
-    .profile-back:hover { color: var(--text); }
+    .profile-back:hover { color: var(--accent); }
     .profile-hero {
       display: grid; grid-template-columns: 380px 1fr;
       gap: 80px; padding: 40px 0 56px;
@@ -251,32 +312,40 @@
     }
     .profile-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .profile-photo-placeholder {
-      font-size: 10px; letter-spacing: 0.2em; color: rgba(240,240,240,0.1); text-transform: uppercase;
+      font-size: 10px; letter-spacing: 0.2em; color: rgba(229,226,225,0.1); text-transform: uppercase;
     }
-    .profile-meta { display: flex; flex-direction: column; justify-content: flex-end; gap: 18px; }
+    .profile-meta { display: flex; flex-direction: column; justify-content: flex-end; gap: 16px; }
     .profile-genre {
-      font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted);
+      font-family: var(--ff-label);
+      font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent);
     }
     .profile-name {
-      font-size: clamp(42px, 5.5vw, 72px); font-weight: 300;
-      line-height: 1; letter-spacing: -0.025em;
+      font-family: var(--ff-head);
+      font-size: clamp(42px, 6vw, 88px); font-weight: 900;
+      line-height: 0.9; letter-spacing: -0.035em; text-transform: uppercase;
     }
-    body.ko .profile-name { font-family: var(--ff-ko-hd); font-weight: 400; }
+    body.ko .profile-name {
+      font-family: var(--ff-ko-hd); font-weight: 900;
+      text-transform: none; letter-spacing: -0.02em;
+    }
     .profile-bio {
-      font-size: 14px; line-height: 1.82; color: rgba(240,240,240,0.72);
+      font-family: var(--ff-serif); font-style: italic;
+      font-size: 15px; line-height: 1.82; color: rgba(229,226,225,0.72);
       max-width: 520px;
     }
+    body.ko .profile-bio { font-family: var(--ff-body); font-style: normal; font-size: 14px; }
     .profile-section {
       padding: 40px 0; border-bottom: 1px solid var(--border);
     }
     .profile-section:last-child { border-bottom: none; padding-bottom: 80px; }
     .profile-section-title {
+      font-family: var(--ff-label);
       font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
       color: var(--muted); margin-bottom: 24px;
     }
     /* Spotify in profile */
     .profile-spotify iframe {
-      border-radius: 8px; width: 100%; height: 352px;
+      border-radius: 0; width: 100%; height: 352px;
       border: none; display: block; background: var(--bg-3);
     }
     .profile-spotify-note {
@@ -290,27 +359,31 @@
       padding: 13px 0; border-bottom: 1px solid var(--border);
     }
     .disco-row:last-child { border-bottom: none; }
-    .disco-year { font-size: 11px; color: var(--muted); }
+    .disco-year { font-family: var(--ff-label); font-size: 11px; color: var(--muted); }
     .disco-title { font-size: 15px; }
     .disco-type {
+      font-family: var(--ff-label);
       font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
     }
     /* Tags */
     .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
     .tag-link {
-    text-decoration: none;
-    color: var(--accent);
-    border: 1px solid var(--accent);
-  }
-  .tag-link:hover {
-    background: var(--accent);
-    color: var(--bg);
-  }
-  .tag {
-      padding: 5px 14px; border: 1px solid var(--border);
-      font-size: 11px; color: var(--muted);
+      text-decoration: none;
+      color: var(--accent);
+      border: 1px solid rgba(188,194,255,0.35);
+      border-radius: 0;
     }
-    .tag.cover { border-color: rgba(240,240,240,0.26); color: var(--text); }
+    .tag-link:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .tag {
+      padding: 5px 14px; border: 1px solid var(--border);
+      font-family: var(--ff-label);
+      font-size: 10px; letter-spacing: 0.1em; color: var(--muted);
+      border-radius: 0;
+    }
+    .tag.cover { border-color: rgba(229,226,225,0.26); color: var(--text); }
     /* Performances */
     .perf-list {}
     .perf-row {
@@ -319,7 +392,7 @@
     }
     .perf-row:last-child { border-bottom: none; }
     .perf-name { font-size: 14px; }
-    .perf-loc { font-size: 11px; color: var(--muted); text-align: right; }
+    .perf-loc { font-family: var(--ff-label); font-size: 11px; color: var(--muted); text-align: right; }
     /* Artist video list in profile */
     .artist-video-list {}
     .artist-video-row {
@@ -350,7 +423,7 @@
     }
     .artist-video-info { display: flex; flex-direction: column; justify-content: center; gap: 6px; }
     .artist-video-title { font-size: 15px; }
-    .artist-video-type { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; }
+    .artist-video-type { font-family: var(--ff-label); font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
 
     /* ══════════════════════════════
        RELEASES
@@ -376,7 +449,7 @@
     }
     .release-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .release-cover-placeholder {
-      font-size: 9px; letter-spacing: 0.2em; color: rgba(240,240,240,0.1); text-transform: uppercase;
+      font-size: 9px; letter-spacing: 0.2em; color: rgba(229,226,225,0.1); text-transform: uppercase;
     }
     .release-info { padding: 18px 20px 22px; }
     /* Releases page — vertical embed list */
@@ -387,7 +460,7 @@
       padding-top: 8px;
     }
     .release-embed-item iframe {
-      border-radius: 8px; border: none; display: block;
+      border-radius: 0; border: none; display: block;
     }
 
     /* ── Releases art grid ───────────────────────────────────────────── */
@@ -401,7 +474,7 @@
     .rel-art-wrap {
       aspect-ratio: 1 / 1;
       overflow: hidden;
-      border-radius: 6px;
+      border-radius: 0;
       background: var(--bg-3);
       position: relative;
     }
@@ -429,7 +502,8 @@
     .rel-art-overlay svg { filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6)); }
     .rel-info { padding: 0 2px; }
     .rel-artist {
-      font-size: 10px; letter-spacing: 0.14em;
+      font-family: var(--ff-label);
+      font-size: 10px; letter-spacing: 0.16em;
       text-transform: uppercase; color: var(--muted); margin-bottom: 3px;
     }
     .rel-title { font-size: 13px; font-weight: 400; color: var(--text); }
@@ -437,10 +511,11 @@
     @media (max-width: 640px)  { .releases-art-grid { grid-template-columns: repeat(2, 1fr); } }
 
     .release-artist {
+      font-family: var(--ff-label);
       font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
     }
     .release-title { font-size: 16px; font-weight: 400; }
-    .release-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .release-meta { font-family: var(--ff-label); font-size: 11px; color: var(--muted); margin-top: 4px; }
 
     /* ══════════════════════════════
        VIDEOS
@@ -465,6 +540,7 @@
     .video-cell:hover .yt-play { background: rgba(255,255,255,0.18); }
     .video-info { padding: 16px 20px 20px; border-top: 1px solid var(--border); }
     .video-artist {
+      font-family: var(--ff-label);
       font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
       color: var(--muted); margin-bottom: 6px;
     }
@@ -480,16 +556,18 @@
       padding: 28px 0; border-bottom: 1px solid var(--border);
     }
     .event-row:last-child { border-bottom: none; padding-bottom: 80px; }
-    .event-date { font-size: 12px; color: var(--muted); padding-top: 3px; }
+    .event-date { font-family: var(--ff-label); font-size: 12px; color: var(--muted); padding-top: 3px; }
     .event-name { font-size: 20px; font-weight: 400; }
-    .event-sub { font-size: 12px; color: var(--muted); margin-top: 5px; }
-    .event-location { font-size: 12px; color: var(--muted); text-align: right; padding-top: 5px; }
+    .event-sub { font-family: var(--ff-label); font-size: 11px; color: var(--muted); margin-top: 5px; letter-spacing: 0.05em; }
+    .event-location { font-family: var(--ff-label); font-size: 11px; color: var(--muted); text-align: right; padding-top: 5px; }
     .event-tag {
       display: inline-block; margin-top: 12px;
+      font-family: var(--ff-label);
       font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
       color: var(--muted); border: 1px solid var(--border); padding: 3px 10px;
+      border-radius: 0;
     }
-    .event-tag.upcoming { border-color: rgba(240,240,240,0.24); color: var(--text); }
+    .event-tag.upcoming { border-color: var(--accent); color: var(--accent); }
 
     /* ══════════════════════════════
        NEWS
@@ -501,14 +579,17 @@
       padding: 24px 0; cursor: pointer; transition: opacity 0.2s;
     }
     .news-article:hover .news-article-header { opacity: 0.65; }
-    .news-article-date { font-size: 11px; color: var(--muted); padding-top: 2px; }
-    .news-article-headline { font-size: 15px; line-height: 1.45; }
-    .news-article-src { font-size: 10px; letter-spacing: 0.1em; color: var(--muted); text-align: right; padding-top: 3px; }
+    .news-article-date { font-family: var(--ff-label); font-size: 11px; color: var(--muted); padding-top: 2px; }
+    .news-article-headline { font-family: var(--ff-label); font-size: 14px; font-weight: 400; line-height: 1.45; letter-spacing: 0.01em; }
+    .news-article-src { font-family: var(--ff-label); font-size: 10px; letter-spacing: 0.1em; color: var(--muted); text-align: right; padding-top: 3px; }
     .news-article-body {
       display: none;
       padding: 0 0 28px 134px;
-      font-size: 14px; line-height: 1.78; color: rgba(240,240,240,0.68);
+      font-size: 14px; line-height: 1.82;
+      font-family: var(--ff-serif); font-style: italic;
+      color: rgba(229,226,225,0.68);
     }
+    body.ko .news-article-body { font-family: var(--ff-body); font-style: normal; }
     .news-article.open .news-article-body { display: block; }
     .news-article-body p + p { margin-top: 14px; }
     /* Language-specific news content */
@@ -523,22 +604,28 @@
       padding: 80px 0 60px; border-bottom: 1px solid var(--border);
     }
     .about-hero h1 {
-      font-size: clamp(32px, 5vw, 68px); font-weight: 300;
-      line-height: 1.1; max-width: 760px; letter-spacing: -0.018em;
+      font-family: var(--ff-head);
+      font-size: clamp(32px, 5.5vw, 72px); font-weight: 900;
+      line-height: 0.95; max-width: 760px; letter-spacing: -0.03em;
+      text-transform: uppercase;
     }
-    body.ko .about-hero h1 { font-family: var(--ff-ko-hd); font-weight: 400; }
+    body.ko .about-hero h1 { font-family: var(--ff-ko-hd); font-weight: 900; text-transform: none; }
     .about-block {
       display: grid; grid-template-columns: 220px 1fr;
       gap: 56px; padding: 52px 0; border-bottom: 1px solid var(--border);
     }
     .about-block:last-child { border-bottom: none; padding-bottom: 80px; }
     .about-label {
+      font-family: var(--ff-label);
       font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
       color: var(--muted); padding-top: 4px;
     }
     .about-text {
-      font-size: 15px; line-height: 1.87; color: rgba(240,240,240,0.78); max-width: 620px;
+      font-size: 15px; line-height: 1.87;
+      font-family: var(--ff-serif); font-style: italic;
+      color: rgba(229,226,225,0.78); max-width: 620px;
     }
+    body.ko .about-text { font-family: var(--ff-body); font-style: normal; font-size: 14px; }
     .about-text p + p { margin-top: 18px; }
     .about-roster {
       display: grid; grid-template-columns: repeat(3, 1fr);
@@ -550,8 +637,12 @@
       border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
     }
     .about-roster-item:hover { background: var(--bg-2); }
-    .about-roster-name { font-size: 20px; font-weight: 400; }
-    .about-roster-genre { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .about-roster-name {
+      font-family: var(--ff-head);
+      font-size: 18px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.01em;
+    }
+    .about-roster-genre { font-family: var(--ff-label); font-size: 10px; color: var(--muted); margin-top: 5px; letter-spacing: 0.1em; }
 
     /* ══════════════════════════════
        FOOTER
@@ -560,10 +651,10 @@
       display: flex; justify-content: space-between; align-items: center;
       padding: 28px 40px; border-top: 1px solid var(--border);
       max-width: 1280px; margin: 0 auto;
-      font-size: 11px; color: var(--muted);
+      font-family: var(--ff-label); font-size: 11px; color: var(--muted); letter-spacing: 0.08em;
     }
     .page-footer a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
-    .page-footer a:hover { color: var(--text); }
+    .page-footer a:hover { color: var(--accent); }
 
     /* ══════════════════════════════
        Responsive
@@ -575,6 +666,16 @@
       .profile-hero { grid-template-columns: 320px 1fr; gap: 56px; }
       .nav-center { gap: 20px; }
       .nav-center a { font-size: 10px; }
+      .home-roster { grid-template-columns: 240px 1fr; }
+      .home-roster-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (max-width: 900px) {
+      .home-roster { grid-template-columns: 1fr; }
+      .home-roster-left {
+        border-right: none; border-bottom: 1px solid var(--border);
+        padding: 40px 24px;
+      }
+      .home-roster-grid { grid-template-columns: repeat(4, 1fr); }
     }
     @media (max-width: 840px) {
       :root { --nav-h: 90px; }
@@ -605,7 +706,6 @@
       .releases-grid { grid-template-columns: repeat(2, 1fr); }
       .releases-embed-grid { grid-template-columns: 1fr; }
       .videos-grid { grid-template-columns: repeat(2, 1fr); }
-      .spotify-grid { grid-template-columns: 1fr; }
       .profile-hero { grid-template-columns: 1fr; gap: 32px; }
       .profile-photo { aspect-ratio: 4/3; }
       .about-block { grid-template-columns: 1fr; gap: 16px; }
@@ -631,7 +731,7 @@
 <!-- ── Navigation ── -->
 <nav>
   <a class="nav-logo" onclick="showPage('home')">
-    <img src="assets/logo/bn-logo.png" alt="Beautiful Noise">
+    <img src="developer/website/assets/logo/bn-logo.png" alt="Beautiful Noise">
   </a>
 
   <ul class="nav-center">
@@ -675,7 +775,7 @@
   <div class="home-hero">
     <h1 class="home-headline">
       <span data-en>We Discover<br><span style="white-space:nowrap">the Eccentric</span></span>
-      <span data-ko>독창적인 것을<br><span style="white-space:nowrap">발굴합니다</span></span>
+      <span data-ko><span style="white-space:nowrap">이상한 사람들을</span><br><span style="white-space:nowrap">발굴합니다</span></span>
     </h1>
     <p class="home-sub">
       <span data-en>Beautiful Noise is an independent record label and management company based in Seoul. Our goal is to shape the next phase of music culture by merging music, art, content, and storytelling into one vision. We discover eccentric artists, develop their work, and deliver them to the community.</span>
@@ -683,17 +783,51 @@
     </p>
   </div>
 
-  <div class="inner">
-    <div class="home-artists-section">
-      <div class="home-artists-list">
-        <a onclick="openArtist('zior-park'); showPage('artists');" style="cursor:pointer;">Zior Park</a>,&nbsp;
-        <a onclick="openArtist('sion'); showPage('artists');" style="cursor:pointer;">Sion</a>,&nbsp;
-        <a onclick="openArtist('siso'); showPage('artists');" style="cursor:pointer;">siso</a>,&nbsp;
-        <a onclick="openArtist('alice-u'); showPage('artists');" style="cursor:pointer;">Alice U</a>,&nbsp;
-        <a onclick="openArtist('ahfone'); showPage('artists');" style="cursor:pointer;">Ahfoné</a>,&nbsp;
-        <a onclick="openArtist('gyun'); showPage('artists');" style="cursor:pointer;">gyun</a>,&nbsp;
-        <a onclick="openArtist('madclown'); showPage('artists');" style="cursor:pointer;">Mad Clown</a>,&nbsp;
-        <a onclick="openArtist('mommyson'); showPage('artists');" style="cursor:pointer;">Mommy Son</a>
+  <div class="home-roster">
+    <div class="home-roster-left">
+      <div>
+        <h2 class="home-roster-heading">
+          <span data-en>THE<br>ROSTER</span>
+          <span data-ko>아티스트<br>로스터</span>
+        </h2>
+        <p class="home-roster-desc">
+          <span data-en>Our artists are chosen not for their reach, but for their voice. We value the uncompromising, the visionary, and the bold.</span>
+          <span data-ko>도달 범위가 아닌 목소리로 선택된 아티스트들. 우리는 타협하지 않는, 비전 있는, 그리고 담대한 것에 가치를 둔다.</span>
+        </p>
+      </div>
+    </div>
+    <div class="home-roster-grid">
+      <div class="home-roster-card" onclick="openArtist('zior-park'); showPage('artists');">
+        <img src="developer/website/assets/artists/Zior.jpg" alt="Zior Park">
+        <div class="home-roster-card-name">Zior Park</div>
+      </div>
+      <div class="home-roster-card" onclick="openArtist('sion'); showPage('artists');">
+        <img src="developer/website/assets/artists/Sion.jpg" alt="Sion">
+        <div class="home-roster-card-name">Sion</div>
+      </div>
+      <div class="home-roster-card" onclick="openArtist('siso'); showPage('artists');">
+        <img src="developer/website/assets/artists/siso.png" alt="siso">
+        <div class="home-roster-card-name">siso</div>
+      </div>
+      <div class="home-roster-card" onclick="openArtist('alice-u'); showPage('artists');">
+        <img src="developer/website/assets/artists/alice.jpg" alt="Alice U">
+        <div class="home-roster-card-name">Alice U</div>
+      </div>
+      <div class="home-roster-card" onclick="openArtist('ahfone'); showPage('artists');">
+        <img src="developer/website/assets/artists/ahfone.png" alt="Ahfoné">
+        <div class="home-roster-card-name">Ahfoné</div>
+      </div>
+      <div class="home-roster-card" onclick="openArtist('gyun'); showPage('artists');">
+        <img src="developer/website/assets/artists/gyun.jpeg" alt="gyun">
+        <div class="home-roster-card-name">gyun</div>
+      </div>
+      <div class="home-roster-card" onclick="openArtist('madclown'); showPage('artists');">
+        <img src="developer/website/assets/artists/Mad Clown.jpg" alt="Mad Clown">
+        <div class="home-roster-card-name">Mad Clown</div>
+      </div>
+      <div class="home-roster-card" onclick="openArtist('mommyson'); showPage('artists');">
+        <img src="developer/website/assets/artists/Mommy Son.jpg" alt="Mommy Son">
+        <div class="home-roster-card-name">Mommy Son</div>
       </div>
     </div>
   </div>
@@ -710,7 +844,7 @@
       </a>
     </div>
 
-    <div class="spotify-grid" id="home-releases-container"></div>
+    <div class="releases-art-grid" id="home-releases-container"></div>
 
     <div class="section-header">
       <span class="section-label">
@@ -749,7 +883,7 @@
 
         <div class="artist-card" onclick="openArtist('zior-park')">
           <div class="artist-card-photo">
-            <img src="assets/artists/Zior.jpg" alt="Zior Park">
+            <img src="developer/website/assets/artists/Zior.jpg" alt="Zior Park">
           </div>
           <div class="artist-card-info">
             <div class="artist-card-name">Zior Park <span data-ko style="font-size:14px; font-weight:400; color:var(--muted)"> 지올팍</span></div>
@@ -759,7 +893,7 @@
 
         <div class="artist-card" onclick="openArtist('sion')">
           <div class="artist-card-photo">
-            <img src="assets/artists/Sion.jpg" alt="Sion">
+            <img src="developer/website/assets/artists/Sion.jpg" alt="Sion">
           </div>
           <div class="artist-card-info">
             <div class="artist-card-name">Sion <span data-ko style="font-size:14px; font-weight:400; color:var(--muted)"> 시온</span></div>
@@ -769,7 +903,7 @@
 
         <div class="artist-card" onclick="openArtist('siso')">
           <div class="artist-card-photo">
-            <img src="assets/artists/siso.png" alt="siso">
+            <img src="developer/website/assets/artists/siso.png" alt="siso">
           </div>
           <div class="artist-card-info">
             <div class="artist-card-name">siso <span data-ko style="font-size:14px; font-weight:400; color:var(--muted)"> 시소</span></div>
@@ -779,7 +913,7 @@
 
         <div class="artist-card" onclick="openArtist('alice-u')">
           <div class="artist-card-photo">
-            <img src="assets/artists/alice.jpg" alt="Alice U">
+            <img src="developer/website/assets/artists/alice.jpg" alt="Alice U">
           </div>
           <div class="artist-card-info">
             <div class="artist-card-name">Alice U <span data-ko style="font-size:14px; font-weight:400; color:var(--muted)"> 앨리스유</span></div>
@@ -789,7 +923,7 @@
 
         <div class="artist-card" onclick="openArtist('ahfone')">
           <div class="artist-card-photo">
-            <img src="assets/artists/ahfone.png" alt="Ahfoné">
+            <img src="developer/website/assets/artists/ahfone.png" alt="Ahfoné">
           </div>
           <div class="artist-card-info">
             <div class="artist-card-name">Ahfoné <span data-ko style="font-size:14px; font-weight:400; color:var(--muted)"> 아포네</span></div>
@@ -799,7 +933,7 @@
 
         <div class="artist-card" onclick="openArtist('gyun')">
           <div class="artist-card-photo">
-            <img src="assets/artists/gyun.jpeg" alt="gyun">
+            <img src="developer/website/assets/artists/gyun.jpeg" alt="gyun">
           </div>
           <div class="artist-card-info">
             <div class="artist-card-name">gyun</div>
@@ -809,7 +943,7 @@
 
         <div class="artist-card" onclick="openArtist('madclown')">
           <div class="artist-card-photo">
-            <img src="assets/artists/Mad Clown.jpg" alt="Mad Clown">
+            <img src="developer/website/assets/artists/Mad Clown.jpg" alt="Mad Clown">
           </div>
           <div class="artist-card-info">
             <div class="artist-card-name">Mad Clown <span data-ko style="font-size:14px; font-weight:400; color:var(--muted);"> 매드클라운</span></div>
@@ -819,7 +953,7 @@
 
         <div class="artist-card" onclick="openArtist('mommyson')">
           <div class="artist-card-photo">
-            <img src="assets/artists/Mommy Son.jpg" alt="Mommy Son">
+            <img src="developer/website/assets/artists/Mommy Son.jpg" alt="Mommy Son">
           </div>
           <div class="artist-card-info">
             <div class="artist-card-name">Mommy Son <span data-ko style="font-size:14px; font-weight:400; color:var(--muted);"> 마미손</span></div>
@@ -839,7 +973,7 @@
         <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
         <div class="profile-hero">
           <div class="profile-photo">
-            <img src="assets/artists/Zior.jpg" alt="Zior Park">
+            <img src="developer/website/assets/artists/Zior.jpg" alt="Zior Park">
           </div>
           <div class="profile-meta">
             <div class="profile-genre">Alternative · Art Rock</div>
@@ -854,16 +988,16 @@
         <div class="profile-section">
           <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
           <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px;">
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/track/77wIhom5rTZkfymvSEB1b4?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/4MqSOAUx06i8FBWbPCMKSQ?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/6LmkkkXUI3esLEAEdJYUA3?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/4d7wbTuRfhy1YJwCueEoAX?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/0VHARY3e2b5F5OSCe9l8vx?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/5LVjO5K6RCXoeGxqG5p5lj?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/7yevXWpk0GN0jy79E5rs36?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/50ZmeOQSnD8c1J0P2BxT2n?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/5dzlqalQHxbkzkyaMg19En?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/7kKvUmDcG2GebFE3gB7IM2?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/track/77wIhom5rTZkfymvSEB1b4?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/4MqSOAUx06i8FBWbPCMKSQ?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/6LmkkkXUI3esLEAEdJYUA3?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/4d7wbTuRfhy1YJwCueEoAX?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/0VHARY3e2b5F5OSCe9l8vx?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/5LVjO5K6RCXoeGxqG5p5lj?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/7yevXWpk0GN0jy79E5rs36?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/50ZmeOQSnD8c1J0P2BxT2n?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/5dzlqalQHxbkzkyaMg19En?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/7kKvUmDcG2GebFE3gB7IM2?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
           </div>
         </div>
 
@@ -948,7 +1082,7 @@
         <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
         <div class="profile-hero">
           <div class="profile-photo">
-            <img src="assets/artists/Sion.jpg" alt="Sion">
+            <img src="developer/website/assets/artists/Sion.jpg" alt="Sion">
           </div>
           <div class="profile-meta">
             <div class="profile-genre">Hyperpop · Digicore</div>
@@ -963,15 +1097,15 @@
         <div class="profile-section">
           <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
           <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px;">
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/6POxibMWodpZmXdkkV97Lf?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/15XP68PNMORaE2xmbxyf3P?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/5oHPjdcJM6hiYNbFVNAJUg?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/1WeXuEY2C5ovaPxuTNvhlF?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/6QvwA1sCAvYGRxLzTctp8v?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/1HekNS17rFw2vtSmnl5Ty3?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/79vgtnhjVpKDS8GpWsu1Sp?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/5Y2eg7LXKaXjcDcfaYVgwj?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/600af5WWeNaasoZFOzG8DN?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/6POxibMWodpZmXdkkV97Lf?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/15XP68PNMORaE2xmbxyf3P?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/5oHPjdcJM6hiYNbFVNAJUg?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/1WeXuEY2C5ovaPxuTNvhlF?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/6QvwA1sCAvYGRxLzTctp8v?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/1HekNS17rFw2vtSmnl5Ty3?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/79vgtnhjVpKDS8GpWsu1Sp?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/5Y2eg7LXKaXjcDcfaYVgwj?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/600af5WWeNaasoZFOzG8DN?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
           </div>
         </div>
 
@@ -1055,14 +1189,14 @@
         <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
         <div class="profile-hero">
           <div class="profile-photo">
-            <img src="assets/artists/siso.png" alt="siso">
+            <img src="developer/website/assets/artists/siso.png" alt="siso">
           </div>
           <div class="profile-meta">
             <div class="profile-genre">Indie Pop · R&amp;B</div>
             <div class="profile-name">siso</div>
             <p class="profile-bio">
-              <span data-en>South Korean singer-songwriter known for delivering special emotions through a unique vocal tone and intimate lyrics. Her 2022 single "사랑이 아닌 단어로 사랑을 말해요" went viral on TikTok. Influenced by Kali Uchis, Jungle, Sault, L'Impératrice, and Sheena Ringo.</span>
-              <span data-ko>독특한 보컬 톤과 가사로 특별한 감정을 전하는 한국인 싱어송라이터. 2022년 "사랑이 아닌 단어로 사랑을 말해요"가 TikTok에서 바이럴됐다. 인플루언스: Kali Uchis, Jungle, Sault, L'Impératrice, Sheena Ringo.</span>
+              <span data-en>Singer-songwriter born in Seoul in 2000. Debuted in January 2020 with the single '새벽', drawing listeners in with an irreplaceable vocal tone and confessional lyrics. Joined Beautiful Noise in July 2024. Reached wider audiences through appearances on the TV show Undercover and as masked contestant 'Red Ruby' on King of Mask Singer.</span>
+              <span data-ko>2000년생 싱어송라이터. 2020년 1월 첫 싱글 '새벽'으로 데뷔, 대체 불가한 음색과 내밀한 가사로 리스너들의 주목을 받아왔다. 2024년 7월 뷰티플노이즈에 합류. 언더커버 출연과 복면가왕 '레드 루비'로 인디 너머의 대중과도 만났다.</span>
             </p>
           </div>
         </div>
@@ -1070,13 +1204,13 @@
         <div class="profile-section">
           <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
           <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px;">
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/track/43pxILjtsYfVCaBxjUmcVL?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/0KGYduvgnJpyuBwjEmIyZr?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/1LULxDQtvUx6miaSB3nTaY?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/14CUSx8Br1OuPQmsXNnyd6?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/2BOen4w2p22PFO5XTXoAMY?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/1OilSmtDUQouwzr8Dp6ATu?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;" src="https://open.spotify.com/embed/album/6FLq4oUbZayLAVuMobzgo1?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/track/43pxILjtsYfVCaBxjUmcVL?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/0KGYduvgnJpyuBwjEmIyZr?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/1LULxDQtvUx6miaSB3nTaY?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/14CUSx8Br1OuPQmsXNnyd6?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/2BOen4w2p22PFO5XTXoAMY?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/1OilSmtDUQouwzr8Dp6ATu?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:0;border:none;display:block;" src="https://open.spotify.com/embed/album/6FLq4oUbZayLAVuMobzgo1?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>
           </div>
         </div>
 
@@ -1127,7 +1261,7 @@
         <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
         <div class="profile-hero">
           <div class="profile-photo">
-            <img src="assets/artists/gyun.jpeg" alt="gyun">
+            <img src="developer/website/assets/artists/gyun.jpeg" alt="gyun">
           </div>
           <div class="profile-meta">
             <div class="profile-genre">Hip Hop · R&amp;B</div>
@@ -1142,22 +1276,22 @@
         <div class="profile-section">
           <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
           <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px; margin-bottom:20px;">
-            <iframe style="border-radius:8px;border:none;display:block;"
+            <iframe style="border-radius:0;border:none;display:block;"
               src="https://open.spotify.com/embed/album/2WgflQMGnxYqAbCq3CS4PM?utm_source=generator&theme=0"
               width="100%" height="152"
               allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
               loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;"
+            <iframe style="border-radius:0;border:none;display:block;"
               src="https://open.spotify.com/embed/album/4M1Bmg5I4vDoRlIKo3DDAc?utm_source=generator&theme=0"
               width="100%" height="152"
               allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
               loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;"
+            <iframe style="border-radius:0;border:none;display:block;"
               src="https://open.spotify.com/embed/album/2wm10RxvtwcvIKFaJLin62?utm_source=generator&theme=0"
               width="100%" height="152"
               allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
               loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;"
+            <iframe style="border-radius:0;border:none;display:block;"
               src="https://open.spotify.com/embed/album/1uoKuIK0h6NA2etnMky8iX?utm_source=generator&theme=0"
               width="100%" height="152"
               allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
@@ -1232,7 +1366,7 @@
         <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
         <div class="profile-hero">
           <div class="profile-photo">
-            <img src="assets/artists/alice.jpg" alt="Alice U">
+            <img src="developer/website/assets/artists/alice.jpg" alt="Alice U">
           </div>
           <div class="profile-meta">
             <div class="profile-genre">Alt-Pop · R&amp;B</div>
@@ -1247,27 +1381,27 @@
         <div class="profile-section">
           <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
           <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px; margin-bottom:20px;">
-            <iframe style="border-radius:8px;border:none;display:block;"
+            <iframe style="border-radius:0;border:none;display:block;"
               src="https://open.spotify.com/embed/album/4OZQOLmpjv7wXSISHcgpL3?utm_source=generator&theme=0"
               width="100%" height="152"
               allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
               loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;"
+            <iframe style="border-radius:0;border:none;display:block;"
               src="https://open.spotify.com/embed/track/3bGPe9oJLRvpufPOUXRuUD?utm_source=generator&theme=0"
               width="100%" height="152"
               allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
               loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;"
+            <iframe style="border-radius:0;border:none;display:block;"
               src="https://open.spotify.com/embed/track/0Z3rOPU261tjYl7h5aFPf2?utm_source=generator&theme=0"
               width="100%" height="152"
               allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
               loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;"
+            <iframe style="border-radius:0;border:none;display:block;"
               src="https://open.spotify.com/embed/track/7FlvExiBqk2YjaDqGJpzuv?utm_source=generator&theme=0"
               width="100%" height="152"
               allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
               loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;"
+            <iframe style="border-radius:0;border:none;display:block;"
               src="https://open.spotify.com/embed/album/5omjfr4eSU1xPjcYtc714V?utm_source=generator&theme=0"
               width="100%" height="152"
               allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
@@ -1290,7 +1424,7 @@
         <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
         <div class="profile-hero">
           <div class="profile-photo">
-            <img src="assets/artists/ahfone.png" alt="Ahfoné">
+            <img src="developer/website/assets/artists/ahfone.png" alt="Ahfoné">
           </div>
           <div class="profile-meta">
             <div class="profile-genre">Hip Hop · Dark Pop</div>
@@ -1337,21 +1471,21 @@
         <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
         <div class="profile-hero">
           <div class="profile-photo">
-            <img src="assets/artists/Mad Clown.jpg" alt="Mad Clown">
+            <img src="developer/website/assets/artists/Mad Clown.jpg" alt="Mad Clown">
           </div>
           <div class="profile-meta">
             <div class="profile-genre">Hip Hop</div>
             <div class="profile-name">Mad Clown</div>
             <p class="profile-bio">
-              <span data-en>Seoul-based rapper. Releasing monthly singles as part of an ongoing project — one track at a time, every month.</span>
-              <span data-ko>서울 기반 래퍼. 매달 한 곡씩 발매하는 월간 싱글 프로젝트를 진행 중이다.</span>
+              <span data-en>Rapper who built his name as a key member of Soul Company, the Seoul-based independent label that defined a generation of Korean hip-hop. Made his debut in 2006 through a feature on The Quiett's album. Rose to national prominence via SHOW ME THE MONEY — placing joint 3rd in Season 2, and as a producer in Seasons 5 and 8. Known for rapid-fire delivery, literary lyricism, and his signature round-frame glasses.</span>
+              <span data-ko>한국 힙합 한 세대를 정의한 서울의 인디 레이블 소울컴퍼니의 핵심 멤버로 이름을 알린 래퍼. 2006년 The Quiett 앨범 피처링으로 데뷔. 쇼미더머니 2 공동 3위, 시즌 5·8 프로듀서로 대중과 만났다. 빠른 랩과 문학적 서정성, 트레이드마크 동그란 안경이 특징이다.</span>
             </p>
           </div>
         </div>
         <div class="profile-section">
           <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
           <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px; margin-bottom:20px;">
-            <iframe style="border-radius:8px;border:none;display:block;"
+            <iframe style="border-radius:0;border:none;display:block;"
               src="https://open.spotify.com/embed/album/3r5Tzrgw9TKGmAEwFvUGNi?utm_source=generator&theme=0"
               width="100%" height="152"
               allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
@@ -1386,26 +1520,26 @@
         <button class="profile-back" onclick="backToGrid()">← <span data-en>All Artists</span><span data-ko>전체 아티스트</span></button>
         <div class="profile-hero">
           <div class="profile-photo">
-            <img src="assets/artists/Mommy Son.jpg" alt="Mommy Son">
+            <img src="developer/website/assets/artists/Mommy Son.jpg" alt="Mommy Son">
           </div>
           <div class="profile-meta">
             <div class="profile-genre">Hip Hop</div>
             <div class="profile-name">Mommy Son</div>
             <p class="profile-bio">
-              <span data-en>Seoul-based artist. Releasing monthly singles as part of an ongoing project — one track at a time, every month.</span>
-              <span data-ko>서울 기반 아티스트. 매달 한 곡씩 발매하는 월간 싱글 프로젝트를 진행 중이다.</span>
+              <span data-en>A rapper of unknown origin. Appeared in November 2018 wearing a pink mask, identity never disclosed. Debuted with the single '소년점프 (Boy Jump)' and rose to national recognition through SHOW ME THE MONEY 777, blending comedy and sharp hip-hop with deadpan charisma. Featured in BBC Korea and numerous major publications. Some have noted a suspicious resemblance — in vocal tone, build, and general vibe — to a certain round-glasses-wearing labelmate. Purely coincidental, probably.</span>
+              <span data-ko>출처불명의 래퍼. 2018년 11월 분홍색 복면을 쓴 채 혜성처럼 등장, 싱글 '소년점프'로 데뷔했다. 쇼미더머니 777 출연으로 전국구 인지도를 얻었으며, 코미디와 힙합을 오가는 독자적인 스타일로 BBC 코리아를 비롯한 다수 매체의 주목을 받았다. 일부에서는 같은 레이블 소속의 동그란 안경 래퍼와 목소리·체형·전반적 분위기가 지나치게 비슷하다고 지적한다. 아마 우연의 일치일 것이다.</span>
             </p>
           </div>
         </div>
         <div class="profile-section">
           <div class="profile-section-title"><span data-en>Discography</span><span data-ko>디스코그래피</span></div>
           <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding-top:4px; margin-bottom:20px;">
-            <iframe style="border-radius:8px;border:none;display:block;"
+            <iframe style="border-radius:0;border:none;display:block;"
               src="https://open.spotify.com/embed/album/5oAbuZZl1FFztjAOSu3lzC?utm_source=generator&theme=0"
               width="100%" height="152"
               allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
               loading="lazy"></iframe>
-            <iframe style="border-radius:8px;border:none;display:block;"
+            <iframe style="border-radius:0;border:none;display:block;"
               src="https://open.spotify.com/embed/album/5Oa9YAFKRTAaiZpTKHAHa5?utm_source=generator&theme=0"
               width="100%" height="152"
               allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture"
@@ -1836,7 +1970,7 @@
   <div class="inner">
 
     <div class="about-logo-wrap">
-      <img src="assets/logo/bn-logo-about.png" alt="Beautiful Noise">
+      <img src="developer/website/assets/logo/bn-logo-about.png" alt="Beautiful Noise">
     </div>
 
     <div class="about-block">
@@ -1848,9 +1982,9 @@
         <p data-en>Beautiful Noise is an independent record label and creative collective based in Seoul, shaping the next phase of music culture by merging music, art, content, and storytelling into one vision.</p>
         <p data-en style="margin-top:18px;">Our mission is to discover and develop unconventional, highly talented artists and build a sustainable model where unique artistry and commercial success coexist — supported by creative strategies, content-driven IP, and global collaborations.</p>
         <p data-en style="margin-top:18px;">We cultivate distinctive, multi-dimensional artists who reflect today's culture and create immersive stories through music, visuals, events, and experimental content — turning each artist into unique IP that drives loyal fandoms and global impact.</p>
-        <p data-ko>Beautiful Noise는 서울 기반의 독립 레이블이자 크리에이티브 콜렉티브다. 음악, 아트, 콘텐츠, 스토리텔링을 하나의 비전으로 융합하며 음악 문화의 다음 국면을 만들어간다.</p>
-        <p data-ko style="margin-top:18px;">우리의 미션은 비전형적이고 뛰어난 재능을 가진 아티스트를 발굴·육성하고, 독창적 예술성과 상업적 성공이 공존하는 지속 가능한 모델을 구축하는 것이다 — 창의적 전략, 콘텐츠 기반 IP, 글로벌 협업을 통해.</p>
-        <p data-ko style="margin-top:18px;">우리는 오늘의 문화를 반영하는 입체적인 아티스트를 육성하고, 음악·비주얼·이벤트·실험적 콘텐츠를 통해 몰입적인 이야기를 만들어낸다 — 각 아티스트를 충성도 높은 팬덤과 글로벌 임팩트를 이끄는 고유한 IP로 전환하며.</p>
+        <p data-ko>Beautiful Noise는 서울 기반의 독립 레이블이자 크리에이티브 콜렉티브입니다. 음악, 아트, 콘텐츠, 스토리텔링을 하나의 비전으로 융합하며 음악 문화의 다음 국면을 만들어가고 있습니다.</p>
+        <p data-ko style="margin-top:18px;">저희의 미션은 비전형적이고 뛰어난 재능을 지닌 아티스트를 발굴·육성하고, 독창적 예술성과 상업적 성공이 공존하는 지속 가능한 모델을 구축하는 것입니다. 창의적 전략, 콘텐츠 기반 IP, 글로벌 협업을 통해 이를 실현해 나가고 있습니다.</p>
+        <p data-ko style="margin-top:18px;">오늘의 문화를 반영하는 입체적인 아티스트를 육성하고, 음악·비주얼·이벤트·실험적 콘텐츠를 통해 몰입감 있는 이야기를 만들어갑니다. 각 아티스트를 충성도 높은 팬덤과 글로벌 임팩트를 이끄는 고유한 IP로 성장시키는 것이 저희의 목표입니다.</p>
       </div>
     </div>
 
@@ -1906,7 +2040,7 @@
           <iframe
             src="https://open.spotify.com/embed/${r.type}/${r.id}?utm_source=generator&theme=0"
             width="100%" height="80" loading="lazy"
-            style="border:none;border-radius:6px;"
+            style="border:none;border-radius:0;"
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
           </iframe>
         </div>
@@ -2086,16 +2220,50 @@
   function renderHomeReleases() {
     const container = document.getElementById('home-releases-container');
     if (!container) return;
-    const top6 = RELEASES.slice(0, 6);
-    container.innerHTML = top6.map(r => `
-      <div class="spotify-card">
-        <iframe
-          src="https://open.spotify.com/embed/${r.type}/${r.id}?utm_source=generator&theme=0"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy"
-          title="${r.artist} — ${r.title}">
-        </iframe>
+    const top6 = RELEASES.slice(0, 8);
+
+    // 1단계: compact embed로 즉시 렌더링 (fallback)
+    container.innerHTML = top6.map((r, i) => `
+      <div class="rel-card" id="h-rcard-${i}">
+        <div class="rel-art-wrap loading" id="h-rawrap-${i}">
+          <iframe
+            src="https://open.spotify.com/embed/${r.type}/${r.id}?utm_source=generator&theme=0"
+            width="100%" height="80" loading="lazy"
+            style="border:none;border-radius:0;"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+          </iframe>
+        </div>
+        <div class="rel-info">
+          <div class="rel-artist">${r.artist}</div>
+          <div class="rel-title">${r.title}</div>
+        </div>
       </div>`).join('');
+
+    // 2단계: oEmbed로 아트워크 업그레이드
+    top6.forEach(async (r, i) => {
+      try {
+        const res = await fetch(
+          `https://open.spotify.com/oembed?url=https://open.spotify.com/${r.type}/${r.id}`,
+          { mode: 'cors' }
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data.thumbnail_url) return;
+        const wrap = document.getElementById('h-rawrap-' + i);
+        if (!wrap) return;
+        wrap.classList.remove('loading');
+        wrap.innerHTML = `
+          <a href="https://open.spotify.com/${r.type}/${r.id}" target="_blank" rel="noopener" class="rel-art-link">
+            <img src="${data.thumbnail_url}" alt="${r.artist} — ${r.title}" loading="lazy" class="rel-art-img">
+            <div class="rel-art-overlay">
+              <svg viewBox="0 0 48 48" width="48" height="48">
+                <circle cx="24" cy="24" r="24" fill="rgba(0,0,0,0.55)"/>
+                <polygon points="19,14 19,34 36,24" fill="white"/>
+              </svg>
+            </div>
+          </a>`;
+      } catch(e) { /* compact embed 유지 */ }
+    });
   }
 
 
